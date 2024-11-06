@@ -357,7 +357,7 @@ public class BasicInfoController {
 		    }
 	}
 	
-	// 창고 -> 재고 출력 페이지
+	// 창고 -> 재고 페이지
     @RequestMapping(value = "/warehouse", method = RequestMethod.GET)
     public void getWarehouse(Model model) throws Exception {
     	logger.debug("getWarehouse() 실행 ");
@@ -409,8 +409,7 @@ public class BasicInfoController {
     // 창고 -> 재고 불러오기
     @ResponseBody
     @RequestMapping(value="/getInventory", method = RequestMethod.POST)
-	public List<InventoryVO> getInventory(
-			@RequestParam String wh_num) throws Exception{
+	public List<InventoryVO> getInventory(@RequestParam String wh_num) throws Exception{
     	logger.debug(" getInventory() 실행  ");
     	logger.debug("wh_num : " + wh_num );
     	

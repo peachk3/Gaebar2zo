@@ -63,6 +63,7 @@
 		<result property="goods_num" column="goods_num" />
 		<result property="inven_qty" column="inven_qty" />
 		<collection property="warehouseList" resultMap="wareMap"/>
+		<collection property="itemList" resultMap="itemMap"/>
 	</resultMap>
 
 	<resultMap type="com.itwillbs.domain.WarehouseVO" id="wareMap">
@@ -81,6 +82,7 @@
 		select * from warehouse_code
 	</select>
 
+	<!-- 거래처 리스트 출력 -->
 	<select id="cliListALL" resultType="ClientVO">
 	    SELECT 
 	        cli_num,
@@ -102,8 +104,22 @@
 	        pic_username
 	    FROM client
 	    <where>
-	        <if test="searchType != null and keyword != null and keyword != ''">
+	        <if test="keyword != null and keyword != ''">
 	            <choose>
+	                <when test="searchType == null or searchType == ''">
+	                    <!-- searchType이 없거나 공백일 때 전체 검색 -->
+	                    AND (cli_num LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_name LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_crn LIKE CONCAT('%', #{keyword}, '%')
+	                    OR (
+	                        CASE 
+	                            WHEN cli_cate = 'CLCU' THEN '고객사'
+	                            WHEN cli_cate = 'CLPT' THEN '협력사'
+	                            ELSE cli_cate
+	                        END LIKE CONCAT('%', #{keyword}, '%')
+	                    )
+	                    OR cli_ind LIKE CONCAT('%', #{keyword}, '%'))
+	                </when>
 	                <when test="searchType == 'code'">
 	                    AND cli_num LIKE CONCAT('%', #{keyword}, '%')
 	                </when>
@@ -145,49 +161,57 @@
 	    LIMIT #{pageStart}, #{pageSize}
 	</select>
 	
+<!-- 검색 수 출력 -->
 	<select id="totalClientCount" resultType="int">
-		SELECT COUNT(*)
-		    FROM (
-		        SELECT 
-		            cli_num,
-		            cli_name,
-		            cli_crn,
-		            CASE 
-		                WHEN cli_cate = 'CLCU' THEN '고객사'
-		                WHEN cli_cate = 'CLPT' THEN '협력사'
-		                ELSE cli_cate
-		            END AS cli_cate,
-		            cli_ind
-		        FROM client
-		    ) AS translated_client
-		<where>
-		        <if test="searchType != null and keyword != null and keyword != ''">
-		            <choose>
-		                <when test="searchType == 'code'">
-		                    AND cli_num LIKE CONCAT('%', #{keyword}, '%')
-		                </when>
-		                <when test="searchType == 'name'">
-		                    AND cli_name LIKE CONCAT('%', #{keyword}, '%')
-		                </when>
-		                <when test="searchType == 'crn'">
-		                    AND cli_crn LIKE CONCAT('%', #{keyword}, '%')
-		                </when>
-		                <when test="searchType == 'cate'">
-		                    AND cli_cate LIKE CONCAT('%', #{keyword}, '%')
-		                </when>
-		                <when test="searchType == 'ind'">
-		                    AND cli_ind LIKE CONCAT('%', #{keyword}, '%')
-		                </when>
-		                <otherwise>
-		                    AND (cli_num LIKE CONCAT('%', #{keyword}, '%')
-		                    OR cli_name LIKE CONCAT('%', #{keyword}, '%')
-		                    OR cli_crn LIKE CONCAT('%', #{keyword}, '%')
-		                    OR cli_cate LIKE CONCAT('%', #{keyword}, '%')
-		                    OR cli_ind LIKE CONCAT('%', #{keyword}, '%')
-		                </otherwise>
-		            </choose>
-		        </if>
-		    </where>
+	    SELECT COUNT(*)
+	    FROM (
+	        SELECT 
+	            cli_num,
+	            cli_name,
+	            cli_crn,
+	            CASE 
+	                WHEN cli_cate = 'CLCU' THEN '고객사'
+	                WHEN cli_cate = 'CLPT' THEN '협력사'
+	                ELSE cli_cate
+	            END AS cli_cate,
+	            cli_ind
+	        FROM client
+	    ) AS translated_client
+	    <where>
+	        <if test="keyword != null and keyword != ''">
+	            <choose>
+	                <when test="searchType == null or searchType == ''">
+	                    AND (cli_num LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_name LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_crn LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_cate LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_ind LIKE CONCAT('%', #{keyword}, '%'))
+	                </when>
+	                <when test="searchType == 'code'">
+	                    AND cli_num LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="searchType == 'name'">
+	                    AND cli_name LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="searchType == 'crn'">
+	                    AND cli_crn LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="searchType == 'cate'">
+	                    AND cli_cate LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="searchType == 'ind'">
+	                    AND cli_ind LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <otherwise>
+	                    AND (cli_num LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_name LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_crn LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_cate LIKE CONCAT('%', #{keyword}, '%')
+	                    OR cli_ind LIKE CONCAT('%', #{keyword}, '%'))
+	                </otherwise>
+	            </choose>
+	        </if>
+	    </where>
 	</select>
 
 	<!-- 품목 리스트 출력 -->
@@ -199,8 +223,16 @@
 		JOIN code c ON c.group_code = ic.m_cate_item_code
 		]]>
 		 <where>
-		        <if test="searchType != null and keyword != null and keyword != ''">
+		        <if test="keyword != null and keyword != ''">
 		            <choose>
+		            	<when test="searchType == null or searchType == ''">
+		            		AND (i.item_num LIKE CONCAT('%', #{keyword}, '%')
+			                OR i.item_cli_code LIKE CONCAT('%', #{keyword}, '%')
+			                OR i.item_name LIKE CONCAT('%', #{keyword}, '%')
+			                OR c.group_name LIKE CONCAT('%', #{keyword}, '%')
+			                OR i.comm LIKE CONCAT('%', #{keyword}, '%'))
+			                OR i.item_mat LIKE CONCAT('%', #{keyword}, '%')
+		                </when>
 		                <when test="searchType == 'code'">
 		                    AND i.item_num LIKE CONCAT('%', #{keyword}, '%')
 		                </when>
@@ -214,6 +246,8 @@
 		                    AND (i.item_num LIKE CONCAT('%', #{keyword}, '%')
 		                    OR i.item_cli_code LIKE CONCAT('%', #{keyword}, '%')
 		                    OR c.group_name LIKE CONCAT('%', #{keyword}, '%')
+		                    OR i.item_mat LIKE CONCAT('%', #{keyword}, '%')
+			                OR i.comm LIKE CONCAT('%', #{keyword}, '%'))
 		                </otherwise>
 		            </choose>
 		        </if>
@@ -230,8 +264,16 @@
 	    JOIN item_code ic ON i.item_cate_code = ic.s_cate_item_code
 	    JOIN code c ON c.group_code = ic.m_cate_item_code
 	    <where>
-	        <if test="searchType != null and keyword != null and keyword != ''">
+	        <if test="keyword != null and keyword != ''">
 	            <choose>
+	            	<when test="searchType == null or searchType == ''">
+	            		AND (i.item_num LIKE CONCAT('%', #{keyword}, '%')
+		                OR i.item_cli_code LIKE CONCAT('%', #{keyword}, '%')
+		                OR i.item_name LIKE CONCAT('%', #{keyword}, '%')
+		                OR c.group_name LIKE CONCAT('%', #{keyword}, '%')
+		                OR i.comm LIKE CONCAT('%', #{keyword}, '%'))
+		                OR i.item_mat LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
 	                <when test="searchType == 'code'">
 	                    AND i.item_num LIKE CONCAT('%', #{keyword}, '%')
 	                </when>
@@ -244,7 +286,9 @@
 	                <otherwise>
 	                    AND (i.item_num LIKE CONCAT('%', #{keyword}, '%')
 	                    OR i.item_cli_code LIKE CONCAT('%', #{keyword}, '%')
-	                    OR c.group_name LIKE CONCAT('%', #{keyword}, '%'))
+	                    OR c.group_name LIKE CONCAT('%', #{keyword}, '%')
+	                    OR i.item_mat LIKE CONCAT('%', #{keyword}, '%')
+			            OR i.comm LIKE CONCAT('%', #{keyword}, '%'))
 	                </otherwise>
 	            </choose>
 	        </if>
@@ -403,11 +447,19 @@
     
 	<!-- 창고 -> 재고 불러오기 -->
     <select id="getInventory" parameterType="String" resultMap="invenMap">
-   		select inv.inven_num, inv.wh_num, inv.goods_num, inv.inven_qty, wa.wh_name, wa.wh_zone, wa.wh_rack, wa.wh_row, wa.wh_column
-		from inventory inv
+	    select i.item_name, inv.goods_num, inv.inven_qty, inv.inven_num, inv.wh_num, wa.wh_name, wa.wh_zone, wa.wh_rack, wa.wh_row, wa.wh_column
+		from item i
+		join inventory inv
+		on SUBSTRING(inv.goods_num, 1, 6) = i.item_num
 		join warehouse wa on inv.wh_num = wa.wh_num
 		where inv.wh_num=#{wh_num};
-   	</select>
+	</select>
+<!--     <select id="getInventory" parameterType="String" resultMap="invenMap"> -->
+<!--    		select inv.inven_num, inv.wh_num, inv.goods_num, inv.inven_qty, wa.wh_name, wa.wh_zone, wa.wh_rack, wa.wh_row, wa.wh_column -->
+<!-- 		from inventory inv -->
+<!-- 		join warehouse wa on inv.wh_num = wa.wh_num -->
+<!-- 		where inv.wh_num=#{wh_num}; -->
+<!--    	</select> -->
    	
 	<!-- 창고 -> MaxZone 불러오기 -->
     <select id="getMaxZoneNumber" parameterType="map" resultType="Integer">

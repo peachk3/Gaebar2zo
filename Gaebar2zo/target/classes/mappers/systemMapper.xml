@@ -7,18 +7,20 @@
 
 <!-- join절을 사용하기 위한 resultMap 모두 직접 설정하기 -->
 <!--  itemCodeVo -->
-<resultMap type="com.itwillbs.domain.ItemCodeVO" id="itemCGMap">
+<!-- <resultMap type="com.itwillbs.domain.ItemCodeVO" id="itemCGMap">
 	<id property="s_cate_item_code" column="s_cate_item_code" />
 	<result property="s_cate_item_name" column="s_cate_item_name"/>
 	<result property="m_cate_item_code" column="m_cate_item_code"/>
 	<collection property="codeGroupList" resultMap="codeGroupMap"></collection>
-</resultMap>
+</resultMap> -->
 
 <!-- CodeVO -->
-<resultMap type="com.itwillbs.domain.CodeVO" id="codeGroupMap">
+<!-- <resultMap type="com.itwillbs.domain.CodeVO" id="codeGroupMap">
 	<result property="group_code" column="group_code"/>
 	<result property="group_name" column="group_name"/>
-</resultMap>
+</resultMap> -->
+
+
 
 <!-- 시스템관리 (사용자 등록 - 전체리스트) -->
 <select id="employeeListAll" resultType="UsersVO">
@@ -102,19 +104,48 @@
 	select count(*)from users where user_phone = #{user_phone}
 </select>
 
+
+
+ <!-- 직책권한 -->
+	<insert id="addEmpAuth" parameterType="AuthoritiesVO">
+	    insert into authorities (username, authority)
+	    values (#{username}, #{authority})
+	    </insert>
+
+
+
+<!--사용자ID (username) 생성 -->
+<select id="addEmpUsername" resultType="String">
+		select CONCAT('US',LPAD(COALESCE(MAX(CAST(SUBSTRING(username, 3) AS UNSIGNED)), 0) + 1, 4, '0'))
+    	from users
+</select>
+
+
 <!-- 사용자등록 -->
 <insert id="addEmp" parameterType="UsersVO">
     insert into users (username, user_per_name, password, user_email, user_pos, user_phone)
-    select 
-    	CONCAT('US',LPAD(COALESCE(MAX(CAST(SUBSTRING(username, 3) AS UNSIGNED)), 0) + 1, 4, '0')),
-    	#{user_per_name},
-    	#{password},
-    	#{user_email},
-    	#{user_pos},
-    	#{user_phone}
-    	from users
-    	where username REGEXP '^US[0-9]+$'
-    </insert>
+    values (
+        #{username},
+        #{user_per_name},
+        #{password},
+        #{user_email},
+        #{user_pos},
+        #{user_phone}
+    )
+</insert>
+
+<!-- 사용자 권한 업데이트 --> 
+<update id="updateEmpAuth">
+	UPDATE authorities a
+	JOIN users u ON a.username = u.username
+	SET a.authority = CASE
+   		 WHEN #{user_pos} = '운영자' THEN 'ROLE_ADMIN'
+   		 WHEN #{user_pos} = '관리자' THEN 'ROLE_MANAGER'
+    	 WHEN #{user_pos} = '사원' THEN 'ROLE_MEMBER'
+   		 ELSE a.authority
+	END
+	WHERE a.username = #{username}
+</update>
 
 <!--  사용자 업데이트 -->
 <update id="updateEmp">
@@ -126,6 +157,15 @@
 	where username = #{username}
 </update>
 
+
+<!-- 사용자 권한 삭제 -->
+<delete id="deleteEmpAuth" parameterType="UsersVO">
+ delete from authorities
+    where username in
+    <foreach item="username" index="index" collection="list" open="(" separator="," close=")">
+        #{username}
+    </foreach>
+</delete>
 
 
 <!-- 사용자 삭제 -->

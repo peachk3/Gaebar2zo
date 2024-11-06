@@ -220,8 +220,7 @@
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalToggleLabel">창고 상세
-									보기</h5>
+								<h5 class="modal-title" id="exampleModalToggleLabel">창고 상세 보기</h5>
 								<button type="button" class="btn-close"
 									data-coreui-dismiss="modal" aria-label="Close"></button>
 							</div>
@@ -916,19 +915,47 @@ $(document).ready(function(){
             data: { wh_num: wh_num },
             success: function(data) {
             	 console.log('Inventory data:', data); // 데이터 확인
-                     $('#inventoryList').empty();
-                 if (data && Array.isArray(data) && data.length > 0) {
-                     
-                     var tableHtml = '<table class="table"><thead><tr><th>품목 번호</th><th>재고량</th></tr></thead><tbody>';
+            	 
+            	 $('#inventoryList').empty();
+            	 if (data && Array.isArray(data) && data.length > 0) {
+            	 console.log('itemList:', data[0].itemList);
+            	        
+            	 var itemList = data[0].itemList;
+            	 var itemName = itemList && itemList.length > 0 ? itemList[0].item_name : '알 수 없음';
+            	 var colors = [];
+            	 var sizes = [];
+            	 
+            	 for (var i = 0; i <data.length; i++){
+            	 	var lastChar = data[i].goods_num.slice(-1);
+            	 	var size = data[i].goods_num.slice(-2, -1);
+            	 	
+            		var color;
+	            	 if (lastChar === 'B') {
+	            	     color = '블랙';
+	            	 } else if (lastChar === 'W') {
+	            	     color = '화이트';
+	            	 } else {
+	            	     color = 'unknown'; // 'B'나 'W'가 아닌 경우의 기본값
+	            	 }
+	            	 colors.push(color); // 색상 배열에 저장
+	            	 sizes.push(size);
+            	 }
+            	 console.log('itemName:', itemName);
+            	 console.log('색상: ', colors);
+            	 console.log('사이즈: ', sizes);
+            	 
+                     var tableHtml = '<table class="table"><thead><tr><th>품목 번호</th><th>품목명</th><th>사이즈</th><th>품목 색상</th><th>재고량</th></tr></thead><tbody>';
                      $.each(data, function(index, value) {
-                    	 tableHtml += '<tr><td>' + value.goods_num + '</td><td>'+ value.inven_qty + '</td></tr>';
+                    	  var itemColor = colors[index];
+                    	  var itemSize = sizes[index];
+                    	 
+                    	 tableHtml += '<tr><td>' + value.goods_num + '</td><td>' + itemName + '</td><td>' + itemSize + '</td><td>' + itemColor +'</td><td>' + value.inven_qty + '</td></tr>';
 //                          $('#inventoryList').append('<table><thead><tr><th>'+ 품목 번호 + '</th><th>' + 재고량 + '</th></tr></thead><tbody><td>'
 //                         		  + value.goods_num + '</td><td>' + value.inven_qty + '</td></tbody></table>');
                      });
                      tableHtml += '</tbody></table>';
                      
                      $('#inventoryList').append(tableHtml);
-                     
                  } else {
                 	 $('#inventoryList').html('해당 구역 재고 없음 ');
                  }

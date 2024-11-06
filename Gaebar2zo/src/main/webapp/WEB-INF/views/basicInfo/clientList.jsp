@@ -111,31 +111,42 @@
 
 
 	<div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-		<c:url var="pageUrl" value="/basicInfo/clientList">
-            <c:param name="searchType" value="${searchType}"/>
-            <c:param name="keyword" value="${keyword}"/>
-        </c:url>
-
-<!--         <nav aria-label="Page navigation" class="pagination-container"> -->
-	<nav class="pagination-container" aria-label="Pagination">
+		<nav class="pagination-container" aria-label="Pagination">
             <ul class="pagination justify-content-center">
                 <c:if test="${pageVO.prev}">
                     <li class="page-item">
-                        <a class="page-link" href="${pageUrl}&page=${pageVO.startPage - 1}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
+             			<c:url var="prevUrl" value="/basicInfo/clientList">
+							<c:param name="page" value="${pageVO.startPage - 1}" />
+							<c:param name="searchType" value="${searchType}" />
+							<c:param name="keyword" value="${keyword}" />
+						</c:url> 
+				        <a class="page-link" href="${prevUrl}" aria-label="Previous">
+				          <span aria-hidden="true">&laquo;</span>
+				        </a>
                     </li>
                 </c:if>
-                <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
-                    <li class="page-item ${pageVO.cri.page == i ? 'active' : ''}">
-                        <a class="page-link" href="${pageUrl}&page=${i}">${i}</a>
-                    </li>
-                </c:forEach>
+                
+               <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
+		       		<c:url var="pageUrl" value="/basicInfo/clientList">
+				        <c:param name="page" value="${i}" />
+				        <c:param name="searchType" value="${searchType}" />
+				        <c:param name="keyword" value="${keyword}" />
+		     		 </c:url>
+		      
+		      		<li class="page-item ${pageVO.cri.page == i ? 'active' : ''}">
+						<a class="page-link" href="${pageUrl}">${i}</a>
+					</li>
+				</c:forEach>
                 <c:if test="${pageVO.next && pageVO.endPage > 0}">
-                    <li class="page-item">
-                        <a class="page-link" href="${pageUrl}&page=${pageVO.endPage + 1}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
+		           <li class="page-item">
+			        <c:url var="nextUrl" value="/basicInfo/clientList">
+			          <c:param name="page" value="${pageVO.endPage + 1}" />
+			          <c:param name="searchType" value="${searchType}" />
+			          <c:param name="keyword" value="${keyword}" />
+			        </c:url>
+		        <a class="page-link" href="${nextUrl}" aria-label="Next">
+		          <span aria-hidden="true">&raquo;</span>
+		        </a>
                     </li>
                 </c:if>
             </ul>

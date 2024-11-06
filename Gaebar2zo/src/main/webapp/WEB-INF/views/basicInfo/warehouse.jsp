@@ -32,7 +32,7 @@
         }
     </style>
 <body>
-        <h1>창고별 재고 출력</h1>
+        <h1>AA창고별 재고 출력</h1>
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right : 10px; padding : 10px;">
       <button class="btn btn-primary" id="registWhZoneBtn" name="registWhZoneBtn" type="button" >Zone 등록</button>
@@ -67,8 +67,6 @@
 	
 	<div id="gridContainer" class="grid-container"></div>
 	
-<!-- 	<ul id="inventoryList"></ul> -->
-
 
 	<div id="exampleModalToggle" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -289,14 +287,18 @@ $(document).ready(function() {
             type: 'POST',
 	        dataType: "json",
             data: { wh_num: wh_num },
-            success: function(data) {
-            	 console.log('Inventory data:', data); // 데이터 확인
+            success: function(response) {
+            	
+            	 console.log('Inventory data000:', response); // 데이터 확인
                      $('#inventoryList').empty();
-                 if (data && Array.isArray(data) && data.length > 0) {
-                     
-                     var tableHtml = '<table class="table"><thead><tr><th>품목 번호</th><th>재고량</th></tr></thead><tbody>';
-                     $.each(data, function(index, value) {
-                    	 tableHtml += '<tr><td>' + value.goods_num + '</td><td>' + value.inven_qty + '</td></tr>';
+            	 
+                 if (response.length > 0) {
+                	 var item = response[0];
+                	 console.log(item);
+                	 
+                     var tableHtml = '<table class="table"><thead><tr><th>품목 번호</th><th>품목명</th><th>재고량</th></tr></thead><tbody>';
+                     $.each(item.itemList, function(index, itemLDetail) {
+                    	 tableHtml += '<tr><td>' + itemLDetail.goods_num + '</td><td>' + itemName.item_name + '</td><td>' + itemName.inven_qty + '</td></tr>';
 //                          $('#inventoryList').append('<table><thead><tr><th>'+ 품목 번호 + '</th><th>' + 재고량 + '</th></tr></thead><tbody><td>'
 //                         		  + value.goods_num + '</td><td>' + value.inven_qty + '</td></tbody></table>');
                      });

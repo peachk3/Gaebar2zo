@@ -50,7 +50,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/Styleboso/system/deleteEmp',  // 서버 측 컨트롤러 매핑 URL
+                    url: '/system/deleteEmp',  // 서버 측 컨트롤러 매핑 URL
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(usernames),
@@ -142,7 +142,7 @@ $(document).ready(function() {
 
      
      $.ajax({
-            url: '/Styleboso/system/updateEmp', // 실제 서버 측 URL로 변경해야 합니다.
+            url: '/system/updateEmp', // 실제 서버 측 URL로 변경해야 합니다.
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -234,7 +234,7 @@ $(document).ready(function() {
         console.log("Collected formData:", formData); // 직렬화된 폼 데이터를 콘솔에 출력하여 확인
         
         $.ajax({
-            url: '/Styleboso/system/addEmp',
+            url: '/system/addEmp',
             beforeSend: function(xhr) {
                 xhr.setRequestHeader(header, token);
             },
@@ -337,7 +337,7 @@ $(document).ready(function() {
 
         // 이메일 중복 체크를 위한 Ajax 요청
         $.ajax({
-            url: '/Styleboso/system/emailCheck',
+            url: '/system/emailCheck',
             type : 'GET',
             dataType: 'json',
             data: { user_email: email },
@@ -371,7 +371,7 @@ $(document).ready(function() {
             
             // 전화번호 중복 체크를 위한 Ajax 요청
             $.ajax({
-                url: '/Styleboso/system/phoneCheck',
+                url: '/system/phoneCheck',
                 type: 'GET',
                 dataType: 'json',
                 data: { user_phone: user_phone },
