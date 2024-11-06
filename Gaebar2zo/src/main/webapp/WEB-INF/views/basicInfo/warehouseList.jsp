@@ -41,21 +41,10 @@
         }
 </style>
 
-
-
-
-<!-- <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right : 10px; padding : 10px;"> -->
-
-<%-- 	    <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')"> --%>
-<!-- 	<input class="btn btn-primary" type="button" value="등록" onclick="location.href='/basicInfo/warehouseAdd'" class="btn btn-primary"> -->
-<!-- 	<input class="btn btn-primary" id="deleteWarehouseBtn" type="button" value="삭제"> -->
-<%-- 	</sec:authorize> --%>
-
-<!-- </div> -->
 <body class="bg-gray-100 font-sans">
 	<div class="container mx-auto px-4 py-8">
 		<div class="bg-white rounded-lg shadow-lg p-6">
-			<h1 class="text-2xl font-semibold text-gray-800 mb-6"> 창고 리스트</h1>
+			<h1 class="text-3xl font-semibold text-gray-800 mb-6"> 창고 관리</h1>
 
 
 
@@ -64,34 +53,17 @@
 					<div class="input-group w-500">
 						<div class="input-group-prepend">
 						
-						
-						
-						
-						
-						
-						
 						</div>
-						
-						
 					</div>
-				</div>
-				<div class="w-full md:w-1/2 px-3 flex justify-end items-center">
-					<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-						<input class="btn btn-primary" style="margin-right: 10px;"type="button" value="등록" onclick="location.href='/basicInfo/warehouseAdd'">
-						
-						<input class="btn btn-primary" style="background-color:white; color:black;" id="deleteWarehouseBtn" type="button" value="삭제">
-					</sec:authorize>
 				</div>
 			</div>
 <div id="tableContainer"class="transition-all duration-300 ease-in-out">
-		<div class="overflow-x-hidden bg-white border 1px solid overflow-y-hidden relative" style="height: 405px;">
-			<table class="table table-hover border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <div class="overflow-x-hidden bg-white border overflow-y-hidden relative" id="dynamicTable">
+            	<table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-hover relative">
 				<thead>
-					<tr class="text-left">
-						<th class="py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-100">
-							<div class="form-check">
+					<tr class="text-center">
+						<th class="checkbox-column">
 								<input class="form-check-input focus:outline-none focus:shadow-outline" type="checkbox" value="" id="selectAll" onclick="toggleCheckboxes(this)">
-							</div>
 						</th>
 						<th>창고 코드</th>
 						<th>창고 이름</th>
@@ -101,36 +73,52 @@
 						<th>현재상태</th>
 					</tr>
 				</thead>
+				
+						<c:set var="cellClass" value="clickable-cell text-gray-700 px-2 py-1 flex items-center" />
+				
 				<tbody class="bg-white divide-y divide-gray-200">
 					<c:forEach var="whc" items="${whCodeList }">
 						<tr>
-							<td class="border-dashed border-t border-gray-200 px-3">
-							<div class="form-check">
+							<td class="text-center">
                           		<input class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" type="checkbox" value="" id="flexCheckDefault${whc.m_cate_wh_code }"> 
-                       		</div>
 							</td>
-							<td class="clickable-cell">${whc.m_cate_wh_code }${whc.s_cate_wh_code }</td>
-							<td class="clickable-cell">${whc.s_cate_wh_name }</td>
-							<td class="clickable-cell">${whc.wh_tel }</td>
-							<td class="clickable-cell">${whc.wh_add1 }${whc.wh_add2 }
-								${whc.wh_add3 }</td>
-							<td class="clickable-cell">${whc.wh_man }</td>
-							<td class="clickable-cell"><c:choose>
+							<td><span class="${cellClass}">${whc.m_cate_wh_code }${whc.s_cate_wh_code }</span></td>
+							<td><span class="${cellClass}">${whc.s_cate_wh_name }</span></td>
+							<td><span class="${cellClass}">${whc.wh_tel }</span></td>
+							<td><span class="${cellClass}">${whc.wh_add1 }${whc.wh_add2 }${whc.wh_add3 }</span></td>
+							<td><span class="${cellClass}">${whc.wh_man }</span></td>
+							<td><span class="${cellClass}">
+								<c:choose>
 									<c:when test="${whc.wh_status == 1 }">사용중</c:when>
 									<c:otherwise> 사용 중지</c:otherwise>
-								</c:choose></td>
+								</c:choose></span>
+							</td>
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
 		</div>
+		
 </div>
+		<div class="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+		</div>
+<!-- 하단버튼 -->
+	<div class="flex justify-end items-center px-1 py-0 bg-white">
+		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" onclick="location.href='/basicInfo/warehouseAdd'">
+	        <span>등록</span>
+	        </button>
+	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteItemBtn">
+	        <span>삭제</span>
+	       	</button>
+	    </sec:authorize>
+    </div>
 </div>
 </div>
 
 <div class="container mx-auto px-4 py-8">
 		<div class="bg-white rounded-lg shadow-lg p-6">
-			<h1 class="text-2xl font-semibold text-gray-800 mb-6">창고별 재고 출력</h1>
+			<h1 class="text-3xl font-semibold text-gray-800 mb-6">창고별 재고량</h1>
 			<div class="flex flex-wrap -mx-3 mb-4 md:flex-nowrap">
 			<div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
 			<div class="input-group w-500">
@@ -138,16 +126,6 @@
 			</div>
 			</div>
 			</div>
-				<div class="w-full md:w-1/2 px-3 flex justify-end items-center space-x-2">
-					<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-						<button class="btn btn-primary" id="registWhZoneBtn"
-							name="registWhZoneBtn" type="button">Zone 등록</button>
-						<button class="btn btn-primary" id="registWhBtn"
-							name="registWhBtn" type="button">Rack 등록</button>
-						<button class="btn btn-primary" id="deleteClientBtn" style="background-color:white; color:black;"
-							name="deleteClientBtn" type="button">삭제</button>
-					</sec:authorize>
-				</div>
 				</div>
 				<div id="tableContainer" class="transition-all duration-300 ease-in-out">
 				<div class="overflow-x-hidden bg-white border 1px solid overflow-y-auto relative" style="height: 405px;">
@@ -180,6 +158,37 @@
 				<div id="gridContainer" class="grid-container"></div>
 </div>
 		</div>		<!-- 	<ul id="inventoryList"></ul> -->
+		
+		<div class="w-full md:w-1/2 px-3 flex justify-end items-center space-x-2">
+					<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+						<button class="btn btn-primary" id="registWhZoneBtn"
+							name="registWhZoneBtn" type="button">Zone 등록</button>
+						<button class="btn btn-primary" id="registWhBtn"
+							name="registWhBtn" type="button">Rack 등록</button>
+						<button class="btn btn-primary" id="deleteClientBtn" style="background-color:white; color:black;"
+							name="deleteClientBtn" type="button">삭제</button>
+					</sec:authorize>
+				</div>
+
+<div class="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+</div>
+<!-- 	<!-- 하단버튼 --> -->
+<!-- 	<div class="flex justify-end items-center px-1 py-0 bg-white"> -->
+<%-- 		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')"> --%>
+<!-- 			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2"  -->
+<!-- 				id="registWhZoneBtn" name="registWhZoneBtn"> -->
+<!-- 	        <span>ZONE 등록</span> -->
+<!-- 	        </button> -->
+<!-- 	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" -->
+<!-- 	        	id="registWhBtn" name="registWhBtn"> -->
+<!-- 	        <span>RACK 등록</span> -->
+<!-- 	       	</button> -->
+<!-- 	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" -->
+<!-- 	        	id="deleteClientBtn" name="deleteClientBtn"> -->
+<!-- 	        <span>삭제</span> -->
+<!-- 	       	</button> -->
+<%-- 	    </sec:authorize> --%>
+<!--     </div> -->
 </div>
 </div>
 </body>

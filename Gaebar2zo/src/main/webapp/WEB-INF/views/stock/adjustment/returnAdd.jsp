@@ -72,9 +72,12 @@
                         </table>
                      </div>
                   </div>
-                     <div class="col-12">
-                        <button class="btn btn-primary" type="submit" id="submitFormBtn">등록</button>
-                     </div>
+<!--                   <div class="flex justify-between items-center px-3 py-3 bg-gray-100"> -->
+    <div class="flex gap-2">
+        <button type="submit" id="submitFormBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" >
+            <span>등록</span>
+        </button>
+    </div>
                   </form>
                   
                   

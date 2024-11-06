@@ -16,54 +16,46 @@
 <body class="bg-gray-100 font-sans">
 	<div class="container mx-auto px-4 py-8">
 		<div class="bg-white rounded-lg shadow-lg p-6">
-			<h1 class="text-2xl font-semibold text-gray-800 mb-6">출고 리스트</h1>
-	<div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right : 10px; padding : 10px;">
-		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-           <input type="button" class="btn btn-primary" value="등록" onclick="location.href='/stock/releaseAdd'">
-           <input type="button" style="background-color:white; color:black;" id="deleteItemBtn" name="deleteItemBtn" class="btn btn-primary" value="삭제">
-       </sec:authorize>
-	</div>
-
+			<h1 class="text-3xl font-semibold text-gray-800 mb-6">출고 관리</h1>
 	<div id="tableContainer" class="transition-all duration-300 ease-in-out">
-		<div class="overflow-x-hidden bg-white border 1px solid overflow-y-auto relative" style="height: 405px;">
-             <table class="table table-hover border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+		<div class="overflow-x-hidden bg-white border overflow-y-hidden relative" id="dynamicTable">
+             <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-hover relative">
      	<thead>
-    <tr>
-        <th scope="col">
-			<div class="form-check">
-      			<input class="form-check-input" type="checkbox" value="" id="selectAll" onclick = "toggleCheckboxes(this)"> 
-       		</div>
-       </th>
-        <th scope="col">출고번호</th>
-        <th scope="col">제품코드</th>
-        <th scope="col">품목명</th>
-        <th scope="col">출고 수량</th>
-        <th scope="col">출고일</th>
-        <th scope="col">거래 번호</th>
-        <th scope="col">재고 번호</th>
-        <th scope="col">비고</th>
-        <th scope="col">상태</th>
+		<tr class="text-center">
+        <th class="checkbox-column">
+      			<input class="form-check-input focus:outline-none focus:shadow-outline" type="checkbox" value="" id="selectAll" onclick = "toggleCheckboxes(this)"> 
+       	</th>
+        <th>출고번호</th>
+        <th>제품코드</th>
+        <th>품목명</th>
+        <th>출고 수량</th>
+        <th>출고일</th>
+        <th>거래 번호</th>
+        <th>재고 번호</th>
+        <th>비고</th>
+        <th>상태</th>
   	  </tr>
 	</thead>
-<tbody>
+        
+		<c:set var="cellClass" value="clickable-cell text-gray-700 px-2 py-2 flex items-center" />
+        
+				<tbody class="bg-white divide-y divide-gray-200">
     <c:forEach var="rs" items="${rs}">
         <c:forEach var="item" items="${rs.itemList}">
             <c:forEach var="goods" items="${item.tranGoodsList}">
                 <tr>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault${item.item_num}"> 
-                        </div>
+                    <td class="text-center">
+                            <input class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" type="checkbox" value="" id="flexCheckDefault${item.item_num}"> 
                     </td>
-                    <td class="clickable-cell">${rs.tran_num}</td>
-                    <td class="clickable-cell">${goods.goods_num}</td>
-                    <td class="clickable-cell">${item.item_name}</td>
-                    <td class="clickable-cell">${goods.goods_qty}</td>
-                    <td class="clickable-cell">${rs.rel_date}</td>
-                    <td class="clickable-cell">${rs.top_tran_num}</td>
-                    <td class="clickable-cell">${rs.inchangeList[0].inven_num}</td>
-                    <td class="clickable-cell">${rs.comm}</td>
-                    <td class="clickable-cell">${rs.pro_status}</td>
+                    <td><span class="${cellClass}">${rs.tran_num}</span></td>
+                    <td><span class="${cellClass}">${goods.goods_num}</span></td>
+                    <td><span class="${cellClass}">${item.item_name}</span></td>
+                    <td><span class="${cellClass}">${goods.goods_qty}</span></td>
+                    <td><span class="${cellClass}">${rs.rel_date}</span></td>
+                    <td><span class="${cellClass}">${rs.top_tran_num}</span></td>
+                    <td><span class="${cellClass}">${rs.inchangeList[0].inven_num}</span></td>
+                    <td><span class="${cellClass}">${rs.comm}</span></td>
+                    <td><span class="${cellClass}">${rs.pro_status}</span></td>
                 </tr>
             </c:forEach>
         </c:forEach>
@@ -73,15 +65,50 @@
 </div>
 </div>
 
-    <div class="container mt-3">
-    <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-        <button id="statusChangeBtn" class="btn btn-outline-info">상태 변경</button>
-        <div class="status-buttons mt-2">
-            <button class="btn btn-outline-info" id="preReceiveBtn">출고 준비</button>
-            <button class="btn btn-outline-info" id="completedReceiveBtn">출고 완료</button>
+<!-- 페이징 처리 -->
+<div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+   <nav aria-label="Page navigation" class="pagination-container">
+      <ul class="pagination justify-content-center">
+         <c:if test="${pageVO.prev}">
+            <li class="page-item">
+               <a class="page-link" href="/stock/releaseList?page=${pageVO.startPage - 1}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+               </a>
+            </li>
+         </c:if>
+         <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
+            <li class="page-item ${pageVO.cri.page == i ? 'active' : ''}">
+               <a class="page-link" href="/stock/releaseList?page=${i}">${i}</a>
+            </li>
+         </c:forEach>
+         <c:if test="${pageVO.next && pageVO.endPage > 0}">
+            <li class="page-item">
+               <a class="page-link" href="/stock/releaseList?page=${pageVO.endPage + 1}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+               </a>
+            </li>
+         </c:if>
+      </ul>
+   </nav>
+</div>
+<div class="flex justify-between items-center px-1 py-0 bg-white">
+		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+        <div class="flex gap-2">
+            <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-left" id="preReleaseBtn">출고 준비</button>
+            <button type="button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-left" id="completedReleaseBtn">출고 완료</button>
         </div>
+       </sec:authorize>
+    <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+		<div class="flex gap-2">
+           <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onclick="location.href='/stock/releaseAdd'">
+            <span>등록</span>
+           </button>
+           <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteItemBtn">
+            <span>삭제</span>
+           </button>
+       	</div>
    </sec:authorize>
-    </div>
+	</div>
 </div>
 </div>
 <!-- Modal -->
@@ -154,31 +181,6 @@
         </div>
     </div>
 </div>
-<!-- 페이징 처리 -->
-   <nav aria-label="Page navigation" class="pagination-container">
-      <ul class="pagination justify-content-center">
-         <c:if test="${pageVO.prev}">
-            <li class="page-item">
-               <a class="page-link" href="/stock/releaseList?page=${pageVO.startPage - 1}" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-               </a>
-            </li>
-         </c:if>
-         <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
-            <li class="page-item ${pageVO.cri.page == i ? 'active' : ''}">
-               <a class="page-link" href="/stock/releaseList?page=${i}">${i}</a>
-            </li>
-         </c:forEach>
-         <c:if test="${pageVO.next && pageVO.endPage > 0}">
-            <li class="page-item">
-               <a class="page-link" href="/stock/releaseList?page=${pageVO.endPage + 1}" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-               </a>
-            </li>
-         </c:if>
-      </ul>
-   </nav>
-
 
 	<!-- Modal2 -->
 			<div class="modal fade" id="exampleModal2" tabindex="-1"
@@ -194,9 +196,9 @@
 							<table class="table table-hover text-center" id="modal2-table">
 								<thead class="table-light">
 									<tr>
-										<th scope="col"></th>
-										<th scope="col">담당자 아이디</th>
-										<th scope="col">담당자 명</th>
+										<th></th>
+										<th>담당자 아이디</th>
+										<th>담당자 명</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -307,11 +309,7 @@ $(document).ready(function() {
     });
 
 
-	    $("#statusChangeBtn").click(function() {
-	        $(".status-buttons").toggle();
-	    });
-
-	    $(".status-buttons .btn").click(function() {
+	    $("#preReleaseBtn, #completedReleaseBtn").click(function() {
 	        const pro_status = $(this).text().trim(); // "출고 준비" 혹은 "출고 완료" 버튼의 텍스트를 상태로 사용
 	        const checkedCheckboxes = $('input[type="checkbox"].form-check-input:checked');
 	        const tran_nums = [];

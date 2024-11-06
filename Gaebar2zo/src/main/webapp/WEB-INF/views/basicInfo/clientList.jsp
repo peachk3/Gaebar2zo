@@ -25,22 +25,15 @@
 		    padding-left: 10px; /* 왼쪽 여백을 추가합니다 */
 		    width: 100%; /* 버튼이 부모 요소에 맞게 전체 너비를 가지도록 설정합니다 */
 		  }
+		  
 	</style> 
  
 </head>  
    
-<!--     <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right : 10px; padding : 10px;"> -->
-<!--       <button class="btn btn-primary" type="button" onclick="">검색</button> -->
-<%--     <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')"> --%>
-<!--       <button class="btn btn-primary" type="button" onclick="location.href='/basicInfo/clientAdd'">등록</button> -->
-<!--       <button class="btn btn-primary" id="deleteClientBtn" name="deleteClientBtn" type="button">삭제</button> -->
-<%--       </sec:authorize> --%>
-<!--    </div> -->
-   
 <body class="bg-gray-100 font-sans">
 	<div class="container mx-auto px-4 py-8">
 		<div class="bg-white rounded-lg shadow-lg p-6">
-			<h1 class="text-2xl font-semibold text-gray-800 mb-6">거래처 리스트</h1>
+			<h1 class="text-3xl font-semibold text-gray-800 mb-6">거래처 관리</h1>
 			
 				<!-- Search Form -->
                     <form action="/basicInfo/clientList" method="get" class="form-inline mt-3">
@@ -61,73 +54,53 @@
                             <button class="btn btn-outline-secondary" type="submit">검색</button>
                         </div>
                        </div>
-                       <div class="w-full md:w-1/2 px-3 flex justify-end items-center space-x-2" >
-							<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-								<button class="btn btn-primary" type="button"
-									onclick="location.href='/basicInfo/clientAdd'">등록</button>
-								<button class="btn btn-primary" id="deleteClientBtn"
-									name="deleteClientBtn" style="background-color:white; color:black;" type="button">삭제</button>
-							</sec:authorize>
-                   </div>
                 </div>
 		  </form>
 
 	<div id="tableContainer" class="transition-all duration-300 ease-in-out">
-	<div class="overflow-x-hidden bg-white border 1px solid overflow-y-auto relative" style="height: 405px;">
-   <table class="table table-hover border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+	<div class="overflow-x-hidden bg-white border 1px solid overflow-y-hidden relative" id="dynamicTable">
+            	<table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-hover relative">
       <thead>
-         <tr class="text-left">
-            <th class="py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-100">
-				<div class="form-check">
-                  <input class="form-check-input focus:outline-none focus:shadow-outline" type="checkbox" value="" id="selectAll" onclick = "toggleCheckboxes(this)"> 
-                     <!-- <label class="form-check-label" for="flexCheckDisabled"> Disabled checkbox </label> -->
-            	</div>
+         <tr class="text-center">
+            <th class="checkbox-column">
+                  <input type="checkbox" class="form-check-input focus:outline-none focus:shadow-outline" id="selectAll" onclick = "toggleCheckboxes(this)"> 
             </th>
             <th>거래처 코드</th>
             <th>거래처명</th>
             <th>사업자 등록 번호</th>
-            <th>거래처 구분</th>
-            <th>거래처 업종</th>
-            <th>우편번호</th>
-            <th>거래처주소</th>
-            <th>상세주소</th>
-            <th>상세주소2</th>
+            <th>구분</th>
+            <th>업종</th>
+            <th>주소</th>
             <th>연락처</th>
-            <th>대표자</th>
             <th>이메일</th>
             <th>담당자</th>
          </tr>
       </thead>
+      
+						<c:set var="cellClass" value="clickable-cell text-gray-700 px-2 py-2 flex items-center" />
+						
       <tbody class="bg-white divide-y divide-gray-200">
          <c:forEach var="cli" items="${clientList }">
-            <tr>
-               <td class="border-dashed border-t border-gray-200 px-3">
-                    <div class="form-check">
-                           <input class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" type="checkbox" value="" id="flexCheckDefault${cli.cli_num}"> 
-                          <!--  <label class="form-check-label" for="flexCheckChecked"> Checked checkbox </label> -->
-                    </div>
+            <tr class="hover:bg-gray-50">
+               <td class="text-center">
+                           <input type="checkbox" class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" value="" id="flexCheckDefault${cli.cli_num}">
                      </td>
-                     <td class="clickable-cell">${cli.cli_num }</td>
-                     <td class="clickable-cell">${cli.cli_name }</td>
-                     <td class="clickable-cell">${cli.cli_crn }</td>
-				<%-- <td class="clickable-cell">${cli.cli_cate } --%>
-					 <td class="clickable-cell">
+                     <td><span class="${cellClass}">${cli.cli_num }</span></td>
+                     <td><span class="${cellClass}">${cli.cli_name }</span></td>
+                     <td><span class="${cellClass}">${cli.cli_crn }</span></td>
+					 <td><span class="${cellClass}">
 					 <c:choose>
 						<c:when test="${cli.cli_cate == 'CLCU'}"> 고객사</c:when>
 						<c:when test="${cli.cli_cate == 'CLPT'}"> 협력사</c:when>
 						<c:otherwise>
                    		 ${cli.cli_cate}
                 		</c:otherwise>
-					</c:choose></td>
-					<td class="clickable-cell">${cli.cli_ind }</td>
-                     <td class="clickable-cell">${cli.cli_postCode }</td>
-                     <td class="clickable-cell">${cli.cli_add1 }</td>
-                     <td class="clickable-cell">${cli.cli_add2 }</td>
-                     <td class="clickable-cell">${cli.cli_add3 }</td>
-                     <td class="clickable-cell">${cli.cli_tel }</td>
-                     <td class="clickable-cell">${cli.cli_rep }</td>
-                     <td class="clickable-cell">${cli.cli_email }</td>
-                     <td class="clickable-cell">${cli.pic_username }</td>
+					</c:choose></span></td>
+					<td><span class="${cellClass}">${cli.cli_ind }</span></td>
+                     <td><span class="${cellClass}">${cli.cli_add1 }</span></td>
+                     <td><span class="${cellClass}">${cli.cli_tel }</span></td>
+                     <td><span class="${cellClass}">${cli.cli_email }</span></td>
+                     <td><span class="${cellClass}">${cli.pic_username }</span></td>
             </tr>
          </c:forEach>
       </tbody>
@@ -167,6 +140,17 @@
                 </c:if>
             </ul>
         </nav>
+    </div>
+  <!-- 하단버튼 -->
+	<div class="flex justify-end items-center px-1 py-0 bg-white">
+		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" onclick="location.href='/basicInfo/clientAdd'">
+	        <span>등록</span>
+	        </button>
+	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteItemBtn">
+	        <span>삭제</span>
+	       	</button>
+	    </sec:authorize>
     </div>
 </div>
 </div>
@@ -440,7 +424,7 @@ $(document).ready(function() {
 	
     // 상세보기
     $(".clickable-cell").click(function() {
-        var cli_num = $(this).closest("tr").find("td:nth-child(2)").text();
+        var cli_num = $(this).closest("tr").find("td:nth-child(2)").text().trim();
         currentClientNum = cli_num;
         
         $.ajax({
