@@ -133,6 +133,13 @@ public class BasicInfoServiceImpl implements BasicInfoService{
 		
 		bidao.warehouseInsert(wcvo);
 	}
+	
+	@Override
+	public void createZone(String whCode, String whName) throws Exception {
+		logger.debug(" 창고 등록 + zone 추가");
+		
+		bidao.createZone(whCode, whName);
+	}
 
 	@Override
 	public void deleteWarehouse(List<String> whNums) throws Exception {

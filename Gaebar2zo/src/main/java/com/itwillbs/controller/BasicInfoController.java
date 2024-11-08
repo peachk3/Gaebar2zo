@@ -291,11 +291,15 @@ public class BasicInfoController {
 	// 창고 등록
 	@ResponseBody
 	@RequestMapping(value="/warehouseInsert", method = RequestMethod.POST)
-	public void warehouseInsert_POST(WarehouseCodeVO wcvo) throws Exception {
+	public void warehouseInsert_POST(@ModelAttribute WarehouseCodeVO wcvo, @ModelAttribute WarehouseVO whvo) throws Exception {
 		logger.debug(" warehouseInsert_POST() 실행 ");
 		
-		//List<WarehouseCodeVO> whCodeList =
 		bService.insertWarehouse(wcvo);
+		
+		String whCode = wcvo.getS_cate_wh_code();
+		String whName = wcvo.getS_cate_wh_name();
+		
+		bService.createZone(whCode, whName);
 		logger.debug("");
 	}
 

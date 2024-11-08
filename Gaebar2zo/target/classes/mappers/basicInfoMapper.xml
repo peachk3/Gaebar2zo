@@ -378,6 +378,25 @@
 		values(#{s_cate_wh_code}, #{s_cate_wh_name}, #{wh_tel}, #{wh_postCode}, #{wh_add1}, #{wh_add2}, #{wh_add3}, #{wh_man}, 'WH')
    	</insert>
    	
+   	<insert id="createZone">
+		INSERT INTO warehouse (wh_num, wh_name, wh_zone, wh_rack, wh_row, wh_column, wh_code)
+		VALUES (CONCAT(#{wh_code}, 'A', 1, 1, 'A'), #{wh_name}, 'A', 1, 1, 'A', #{wh_code}),
+			   (CONCAT(#{wh_code}, 'A', 1, 1, 'C'), #{wh_name}, 'A', 1, 1, 'C', #{wh_code}),
+    		   (CONCAT(#{wh_code}, 'A', 1, 1, 'D'), #{wh_name}, 'A', 1, 1, 'D', #{wh_code}),
+    		   (CONCAT(#{wh_code}, 'A', 1, 2, 'A'), #{wh_name}, 'A', 1, 2, 'A', #{wh_code}),
+			   (CONCAT(#{wh_code}, 'A', 1, 2, 'B'), #{wh_name}, 'A', 1, 2, 'B', #{wh_code}),
+    	       (CONCAT(#{wh_code}, 'A', 1, 2, 'C'), #{wh_name}, 'A', 1, 2, 'C', #{wh_code}),
+    		   (CONCAT(#{wh_code}, 'A', 1, 2, 'D'), #{wh_name}, 'A', 1, 2, 'D', #{wh_code}),
+    		   (CONCAT(#{wh_code}, 'A', 1, 3, 'A'), #{wh_name}, 'A', 1, 3, 'A', #{wh_code}),
+			   (CONCAT(#{wh_code}, 'A', 1, 3, 'B'), #{wh_name}, 'A', 1, 3, 'B', #{wh_code}),
+    	       (CONCAT(#{wh_code}, 'A', 1, 3, 'C'), #{wh_name}, 'A', 1, 3, 'C', #{wh_code}),
+    		   (CONCAT(#{wh_code}, 'A', 1, 3, 'D'), #{wh_name}, 'A', 1, 3, 'D', #{wh_code}),
+    		   (CONCAT(#{wh_code}, 'A', 1, 4, 'A'), #{wh_name}, 'A', 1, 4, 'A', #{wh_code}),
+			   (CONCAT(#{wh_code}, 'A', 1, 4, 'B'), #{wh_name}, 'A', 1, 4, 'B', #{wh_code}),
+    	       (CONCAT(#{wh_code}, 'A', 1, 4, 'C'), #{wh_name}, 'A', 1, 4, 'C', #{wh_code}),
+    		   (CONCAT(#{wh_code}, 'A', 1, 4, 'D'), #{wh_name}, 'A', 1, 4, 'D', #{wh_code})
+   	</insert>
+   	
    	<!-- 창고 내부 삭제 -->
    	<delete id="deleteWarehouse">
    		delete from warehouse_code
