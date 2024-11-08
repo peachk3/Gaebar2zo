@@ -46,8 +46,6 @@
 		<div class="bg-white rounded-lg shadow-lg p-6">
 			<h1 class="text-3xl font-semibold text-gray-800 mb-6"> 창고 관리</h1>
 
-
-
 			<div class="flex flex-wrap -mx-3 mb-4">
 				<div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
 					<div class="input-group w-500">
@@ -193,8 +191,7 @@
 </div>
 </body>
 
-				<div id="exampleModalToggle3" class="modal fade" tabindex="-1"
-					aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div id="exampleModalToggle3" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
 							<div class="modal-header">
@@ -439,7 +436,7 @@ function toggleCheckboxes(source) {
 
 $(document).ready(function(){
 	// 삭제
-	$("#deleteWarehouseBtn").click(function(){
+	$("#deleteItemBtn").click(function(){
 		
 		const checkedCheckboxes = $('input[type="checkbox"].form-check-input:checked');
        	console.log("선택된 체크박스 수:", checkedCheckboxes.length);

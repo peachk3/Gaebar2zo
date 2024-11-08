@@ -55,7 +55,10 @@ public interface BasicInfoService {
 
 	// 창고 등록
 	public void insertWarehouse(WarehouseCodeVO wcvo) throws Exception;
-
+	
+	// 창고 등록 + zone 추가
+	public void createZone(String whCode, String whName) throws Exception;
+	
 	// 창고 삭제
 	public void deleteWarehouse(List<String> whNums) throws Exception;
 
@@ -88,6 +91,10 @@ public interface BasicInfoService {
 
 	// 창고 -> rack 추가
 	public String addRack(String wh_code, String wh_zone, String wh_name) throws Exception;
+
+
+
+
 
 
 }
