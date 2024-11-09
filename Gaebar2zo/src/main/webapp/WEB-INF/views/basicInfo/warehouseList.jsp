@@ -156,40 +156,24 @@
 				<div id="gridContainer" class="grid-container"></div>
 </div>
 		</div>		<!-- 	<ul id="inventoryList"></ul> -->
-		
-		<div class="w-full md:w-1/2 px-3 flex justify-end items-center space-x-2">
-					<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-						<button class="btn btn-primary" id="registWhZoneBtn"
-							name="registWhZoneBtn" type="button">Zone 등록</button>
-						<button class="btn btn-primary" id="registWhBtn"
-							name="registWhBtn" type="button">Rack 등록</button>
-						<button class="btn btn-primary" id="deleteClientBtn" style="background-color:white; color:black;"
-							name="deleteClientBtn" type="button">삭제</button>
-					</sec:authorize>
-				</div>
+		<div class="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+		</div>
+		<div class="flex justify-end items-center px-1 py-0 bg-white">
+			<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+				<button class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" id="registWhZoneBtn"
+				 name="registWhZoneBtn" type="button">Zone 등록</button>
+				<button class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" id="registWhBtn"
+					name="registWhBtn" type="button">Rack 등록</button>
+<!-- 						<button class="btn btn-primary" id="deleteClientBtn" style="background-color:white; color:black;" -->
+<!-- 							name="deleteClientBtn" type="button">삭제</button> -->
+			</sec:authorize>
+		</div>
+		<div class="bg-white flex flex-col xs:flex-row items-center xs:justify-between">
+		</div>
+</div>
+</div>
 
-<div class="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-</div>
-<!-- 	<!-- 하단버튼 --> -->
-<!-- 	<div class="flex justify-end items-center px-1 py-0 bg-white"> -->
-<%-- 		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')"> --%>
-<!-- 			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2"  -->
-<!-- 				id="registWhZoneBtn" name="registWhZoneBtn"> -->
-<!-- 	        <span>ZONE 등록</span> -->
-<!-- 	        </button> -->
-<!-- 	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" -->
-<!-- 	        	id="registWhBtn" name="registWhBtn"> -->
-<!-- 	        <span>RACK 등록</span> -->
-<!-- 	       	</button> -->
-<!-- 	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" -->
-<!-- 	        	id="deleteClientBtn" name="deleteClientBtn"> -->
-<!-- 	        <span>삭제</span> -->
-<!-- 	       	</button> -->
-<%-- 	    </sec:authorize> --%>
-<!--     </div> -->
-</div>
-</div>
-</body>
+
 
 				<div id="exampleModalToggle3" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 					<div class="modal-dialog modal-dialog-centered">
@@ -363,6 +347,9 @@
 						onclick="closeDaumPostcode()" alt="닫기 버튼">
 				</div>
 				
+				
+				
+</body>
 				<!-- <script src="path/to/bootstrap.bundle.min.js"></script> -->
 				<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 				<script

@@ -1,5 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../include/header.jsp"%>
+<style>
+.text-right {
+    text-align: right;
+    padding-right: 150px;
+    padding-bottom: 30px;
+}
+
+</style>
+
 
 <body>
 
@@ -11,7 +20,7 @@
 						<form class="row g-3 needs-validation" id="fm1" novalidate>
 						<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
 							<div>
-								<h5>거래처 등록</h5>
+								<h5 class="text-3xl font-semibold text-gray-800 mb-6">거래처 등록</h5>
 							</div>
 <!-- 							<div class="col-md-6"> -->
 <!-- 								<label for="cli_num" class="form-label"> 거래처 코드 </label>  -->
@@ -40,8 +49,10 @@
 								<div id="cliCrnDuplicate" class="text-danger" style="display: none;">중복된 사업자입니다</div>
 							</div>
 							<div class="col-md-2">
-								<label class="form-label">&nbsp;</label>
-								<button type="button" id="cliCrnBtn" class="btn btn-primary">중복 확인</button>
+								<label class="form-label"> &nbsp;</label>
+								<div>
+								<button type="button" id="cliCrnBtn" class="bg-gray-400 hover:bg-gray-700 text-white py-2 px-4 rounded flex items-center">중복 확인</button>
+								</div>
 							</div>
 							<div class="col-md-3">
 								<label for="cli_ind" class="form-label"> 업종</label> 
@@ -80,7 +91,10 @@
 									<input type="text" class="form-control" id="sample6_postcode" name="cli_postCode" readonly required>
 							</div>
 							<div class="col-md-2">
-								<input type="button" style="border: 1px solid;" onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
+								<label class="form-label"> &nbsp;</label>
+								<div>
+								<input type="button" class="bg-gray-400 hover:bg-gray-700 text-white py-2 px-4 rounded flex items-center"  onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
+								</div>
 							</div>
 							<div class="col-md-3">
 								<label for="cli_add1" class="form-label">주소</label>
@@ -95,6 +109,9 @@
 									<label for="cli_extraAdd" class="form-label"> 참고 항목</label>
 									<input type="text" class="form-control" id="sample6_extraAddress" placeholder="참고항목" name="cli_add3"required readonly>
 							</div>
+							<div class="flex gap-2">
+								<button type="submit" id="submitFormBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" >등록</button>
+							</div>
 					</form>
 				</div>
 			</div>
@@ -106,9 +123,7 @@
 		<img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnCloseLayer" style="cursor:pointer;position:absolute;right:-3px;top:-3px;z-index:1" onclick="closeDaumPostcode()" alt="닫기 버튼">
 	</div>
 
-	<div class="col-12 text-right">
-		<button class="btn btn-primary" type="submit" id="submitFormBtn">등록</button>
-	</div>
+
 	
 	<!-- 담당자 선택 모달창 -->
 		<div class="modal fade" id="exampleModal2" tabindex="-1"
@@ -140,13 +155,7 @@
 			</div>
 		</div>
 	</div>
-<style>
-.text-right {
-    text-align: right;
-    padding-right: 150px;
-    padding-bottom: 30px;
-}
-</style>
+
 
 	<!-- <script src="path/to/bootstrap.bundle.min.js"></script> -->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
