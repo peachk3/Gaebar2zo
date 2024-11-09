@@ -10,36 +10,30 @@
 					<div class="card-body">
 						<form class="row g-3 needs-validation" id="fm1" novalidate>
 						<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
-							<div>
-								<h5>창고 등록</h5>
-							</div>
-<!-- 							<div class="col-md-3"> -->
-<!-- 								<label for="warehouseCode" class="form-label"> 창고 코드 </label>  -->
-<!-- 								<input type="text" class="form-control" id="cli_code" readonly> -->
-<!-- 							</div> -->
-							<div class="col-md-3">
+								<h5 class="text-3xl font-semibold text-gray-800 mb-6">창고 등록</h5>
+							<div class="col-md-2">
 								<label for="s_cate_wh_code" class="form-label"> 창고 지역명 </label> 
 								<input type="text" class="form-control" id="s_cate_wh_code" name="s_cate_wh_code" maxlength="2" placeholder="ex) 김포 -> GP" required>
 								<div class="invalid-feedback">창고 지역명을 입력하세요</div>
 								<div id="whCodeError" class="text-danger" style="display: none;">영어로 입력하세요</div>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-2">
 								<label for="cli_crn" class="form-label"> 창고명 </label> 
 								<input type="text" class="form-control" id="s_cate_wh_name" name="s_cate_wh_name" required>
 									<div class="invalid-feedback" >창고명을 입력하세요</div>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-3">
 								<label for="wh_tel" class="form-label"> 연락처 </label>
 								<input type="tel" class="form-control" id="wh_tel" name="wh_tel" maxlength="11" placeholder="ex) 01012341234">
 								<div id="telError" class="text-danger" style="display: none;"> 숫자로 입력하세요</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<label for="validationCustom05" class="form-label">창고 담당자 아이디</label> 
 									<input type="text" class="form-control" id="validationCustom05" data-coreui-toggle="modal" name="wh_man"
 									data-coreui-target="#exampleModal2" required>
 								<div class="invalid-feedback" > 담당자를 입력해주세요 </div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<label for="validationCustom06" class="form-label">창고 담당자 명</label>
 								<input type="text" class="form-control" id="validationCustom06" data-coreui-toggle="modal" data-coreui-target="#exampleModal2"
 									required>
@@ -50,14 +44,16 @@
 								<input type="text" class="form-control" id="sample6_postcode" name="wh_postCode" readonly>
 							</div>
 							<div class="col-md-2">
-								<input type="button" style="border: 1px solid;" onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
-						
+								<label class="form-label"> &nbsp;</label>
+								<div>
+								<input type="button" class="bg-gray-400 hover:bg-gray-700 text-white py-2 px-4 rounded flex items-center"  onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
+								</div>
 							</div>
 							<div class="col-md-3">
 								<label for="wh_add1" class="form-label">창고 주소</label>
 								<input type="text" class="form-control" id="sample6_address" placeholder="주소" name="wh_add1" readonly>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<label for="wh_add2" class="form-label">창고 상세 주소</label>
 								<input type="text" class="form-control" id="sample6_detailAddress" placeholder="상세주소" name="wh_add2" >
 							</div>
@@ -65,8 +61,12 @@
 									<label for="wh_extraAdd" class="form-label"> 참고 항목</label>
 									<input type="text" class="form-control" id="sample6_extraAddress" name="wh_add3" placeholder="참고항목" readonly>
 							</div>
+							<div class="flex gap-2">
+								<button type="submit" id="submitFormBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" ><span>등록</span></button>
+							</div>
 					</form>
 				</div>
+
 			</div>
 		</div>
 	</div>
@@ -108,9 +108,6 @@
 		</div>
 	</div>
 		
-	<div class="col-12">
-		<button class="btn btn-primary" type="submit" id="submitFormBtn">Submit form</button>
-	</div>
 	
 	
 	<!-- <script src="path/to/bootstrap.bundle.min.js"></script> -->

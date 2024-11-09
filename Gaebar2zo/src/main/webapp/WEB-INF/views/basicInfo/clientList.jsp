@@ -158,7 +158,7 @@
 			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" onclick="location.href='/basicInfo/clientAdd'">
 	        <span>등록</span>
 	        </button>
-	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteItemBtn">
+	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteClientBtn">
 	        <span>삭제</span>
 	       	</button>
 	    </sec:authorize>
