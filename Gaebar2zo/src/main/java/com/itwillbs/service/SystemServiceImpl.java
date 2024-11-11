@@ -189,18 +189,6 @@ public class SystemServiceImpl implements SystemService{
 		return icVo != null;
 	}
 
-
-
-
-	
-	
 	  
 }
 	
-
-	
-
-
-
-
-

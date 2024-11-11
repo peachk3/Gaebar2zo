@@ -27,9 +27,4 @@ public class UsersVO {
 //	private List<AuthoritiesVO> authList; // 1:N구조
 	
 
-
-	
-	
-
-
 }

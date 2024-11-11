@@ -73,111 +73,84 @@ $(document).ready(function() {
     
     //사용자 수정(업데이트)-------------------------------------- 
     
-    let originalData = {}; //초기
-    
-    $("#updateEmp").click(function() {
-    	
-    	 const checkedCheckboxes = $('input.itemCheckbox:checked');
-    	
-        // 선택된 체크박스의 수를 콘솔에 출력
-        console.log("선택된 체크박스 수:", checkedCheckboxes.length);
-        
-     // 선택된 체크박스의 각 요소를 콘솔에 출력하여 확인
-        checkedCheckboxes.each(function(index, checkbox) {
-            console.log("선택된 체크박스", index + 1, ":", checkbox);
-        });
-        
-        
-    	if (checkedCheckboxes.length !== 1) {
-            Swal.fire('알림', '수정할 항목을 하나만 선택하세요.', 'warning');
-            return;
-        }
-    	
-    	//체크박스가 속한 테이블 행에서 특정 데이터 가져오기
-    	var selectedRow = $(checkedCheckboxes[0]).closest('tr'); // jQuery 객체로 변환
-        
-    	 const username = selectedRow.find('td:eq(1)').text().trim();  // 사용자ID
-    	    const userName = selectedRow.find('td:eq(2)').text().trim();  // 사용자명
-    	    const userPassword = selectedRow.find('td:eq(3)').text().trim();  // 비밀번호
-    	    const userPos = selectedRow.find('td:eq(4)').text().trim();  // 직책
-    	    const userEmail = selectedRow.find('td:eq(5)').text().trim();  // 이메일
-    	    const userPhone = selectedRow.find('td:eq(6)').text().trim();  // 전화번호
-        
-//        console.log("선택된 행의 데이터:", {
-//            username: username,
-//            userName: userName,
-//            userEmail: userEmail,
-//            userPhone: userPhone,
-//            userPos: userPos
-//        });
-//        
-        $("#edit_username").val(username);
-        $("#edit_user_per_name").val(userName);
-        $("#edit_user_email").val(userEmail);
-        $("#edit_user_phone").val(userPhone);
-        $("#edit_user_pos").val(userPos);
+ 
+    let originalData = {}; // 초기 데이터 저장용
 
-        // 초기 데이터 저장
-        originalData = {
-            username: username,
-            userName: userName,
-            userEmail: userEmail,
-            userPhone: userPhone,
-            userPos: userPos
-        };
-        
-        //모달 폼 
-        $("#updateEmpModal").modal('show');
-    });
-
-    // 저장 버튼 클릭 시
-    $("#saveEditedEmp").click(function() {
-        var data = {
-            username: $("#edit_username").val(),
-            user_per_name: $("#edit_user_per_name").val(),
-            user_email: $("#edit_user_email").val(),
-            user_phone: $("#edit_user_phone").val(),
-            user_pos: $("#edit_user_pos").val()
-        };
-
+ // 모달을 열기 위한 버튼 클릭 이벤트 설정
+ $("#updateEmp").click(function() {
+     const checkedCheckboxes = $('input.itemCheckbox:checked');
      
+     // 선택된 체크박스의 수를 콘솔에 출력
+     console.log("선택된 체크박스 수:", checkedCheckboxes.length);
+
+     if (checkedCheckboxes.length !== 1) {
+         Swal.fire('알림', '수정할 항목을 하나만 선택하세요.', 'warning');
+         return;
+     }
+
+     // 체크박스가 속한 테이블 행에서 데이터 가져오기
+     var selectedRow = $(checkedCheckboxes[0]).closest('tr'); // jQuery 객체로 변환
+     const username = selectedRow.find('td:eq(1)').text().trim();  // 사용자ID
+     const userName = selectedRow.find('td:eq(2)').text().trim();  // 사용자명
+     const userPos = selectedRow.find('td:eq(4)').text().trim();  // 직책
+     const userEmail = selectedRow.find('td:eq(5)').text().trim();  // 이메일
+     const userPhone = selectedRow.find('td:eq(6)').text().trim();  // 전화번호
+
+     // 모달 내 필드에 데이터 채우기
+     $("#edit_username").val(username);
+     $("#edit_user_per_name").val(userName);
+     $("#edit_user_email").val(userEmail);
+     $("#edit_user_phone").val(userPhone);
+     $("#edit_user_pos").val(userPos);
+
+     // 초기 데이터 저장
+     originalData = {
+         username: username,
+         userName: userName,
+         userEmail: userEmail,
+         userPhone: userPhone,
+         userPos: userPos
+     };
+
+     // 모달 폼 보여주기
+     $("#updateEmpModal").modal('show');
+ });
+
+ // 저장 버튼 클릭 시
+ $("#saveEditedEmp").click(function() {
+     var data = {
+         username: $("#edit_username").val(),
+         user_per_name: $("#edit_user_per_name").val(),
+         user_email: $("#edit_user_email").val(),
+         user_phone: $("#edit_user_phone").val(),
+         user_pos: $("#edit_user_pos").val()
+     };
+
      $.ajax({
-            url: '/system/updateEmp', // 실제 서버 측 URL로 변경해야 합니다.
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader(header, token); // CSRF 토큰 설정
-            },
-            success: function(response) {
-                Swal.fire('저장 완료', '사용자 정보가 저장되었습니다.', 'success').then(() => {
-                    $('#updateEmpModal').modal('hide');
-                    location.reload();
-                });
-            },
-            error: function(xhr, status, error) {
-                // 400 에러 시 오류 정보를 콘솔에 출력
-                console.log("Error status:", status);
-                console.log("Error details:", error);
-                console.log("Server response:", xhr.responseText);
-                Swal.fire('Error', '저장 중 오류가 발생했습니다.', 'error');
-            }
-        });
-    });
-    
-	 // 취소 버튼 클릭 시
-		$('#cancelEditEmp').click(function(){
-			 
-			// 초기값으로 되돌리기
-			$("#edit_username").val(originalData.username);
-			$("#edit_user_per_name").val(originalData.userName);
-			$("#edit_user_email").val(originalData.userEmail);
-			$("#edit_user_phone").val(originalData.userPhone);
-			$("#edit_user_pos").val(originalData.userPos);
-		    
-		});
-		   
-    
+         url: '/system/updateEmp', // 실제 서버 측 URL
+         type: 'POST',
+         contentType: 'application/json',
+         data: JSON.stringify(data),
+         beforeSend: function(xhr) {
+        	 if (header && token) {
+                 xhr.setRequestHeader(header, token);
+             }
+         },
+         success: function(response) {
+             console.log("서버 응답 메시지:", response);  // 서버 응답 확인
+             Swal.fire('저장 완료', '사용자 정보가 저장되었습니다.', 'success').then(() => {
+                 $('#updateEmpModal').modal('hide');
+                 location.reload();
+             });
+         },
+         error: function(xhr, status, error) {
+             console.log("Error status:", xhr.status);
+             console.log("Error details:", error);
+             console.log("Server response:", xhr.responseText);
+             Swal.fire('Error', '저장 중 오류가 발생했습니다.', 'error');
+         }
+     });
+ });
     
     // 유효성 검사 함수들
     function regMemberName(user_per_name) {

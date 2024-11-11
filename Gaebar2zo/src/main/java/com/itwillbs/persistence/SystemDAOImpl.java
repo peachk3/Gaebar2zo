@@ -196,15 +196,5 @@ public class SystemDAOImpl implements SystemDAO{
 		return sqlSession.selectOne(NAMESPACE + "getItemCodeAndCheck", s_cate_item_code);
 	}
 
-	
-	  
-
-
-
-
-
-
-
-
 
 }

@@ -59,26 +59,5 @@ public interface SystemService {
 	//공통 품목 중복체크&유효성
 	boolean checkItemCode(String s_cate_item_code) throws Exception;
 
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-
-	
-
-	
-
-
-
-
-
 
 }

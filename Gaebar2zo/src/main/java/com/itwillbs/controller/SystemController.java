@@ -1,7 +1,7 @@
 package com.itwillbs.controller;
 
 
-import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -151,76 +151,80 @@ public class SystemController {
 
 	
 	//사용자 등록
-	@ResponseBody
-	@RequestMapping(value = "/addEmp", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-	public ResponseEntity<?> addEmp(@RequestBody UsersVO usersVo) throws Exception {
-		logger.info("controller ->(사용자 등록 실행)");
-		logger.info("usersVo : "+usersVo);
-		
-		AuthoritiesVO authVo = new AuthoritiesVO();
-		authVo.setUsername(usersVo.getUsername());
-		
-		if(usersVo.getUser_pos().equals("운영자")) {
-			authVo.setAuthority("ROLE_ADMIN");
-			logger.info("운영자");
-		}else if(usersVo.getUser_pos().equals("관리자")) {
-			authVo.setAuthority("ROLE_MANAGER");
-			logger.info("관리자");
-		}else if(usersVo.getUser_pos().equals("사원")) {
-			authVo.setAuthority("ROLE_MEMBER");
-			logger.info("사원");
-		}
-		
-		logger.info("usersVo : "+usersVo);
-		
-		usersVo.setAuthList(authVo);
-		
-		int result = sService.addEmp(usersVo);
+		@ResponseBody
+		@RequestMapping(value = "/addEmp", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+		public ResponseEntity<?> addEmp(@RequestBody UsersVO usersVo) throws Exception {
+			logger.info("controller ->(사용자 등록 실행)");
+			
+			
+			AuthoritiesVO authVo = new AuthoritiesVO();
+			authVo.setUsername(usersVo.getUsername());
+			
+			if(usersVo.getUser_pos().equals("운영자")) {
+				authVo.setAuthority("ROLE_ADMIN");
+				logger.info("운영자");
+			}else if(usersVo.getUser_pos().equals("관리자")) {
+				authVo.setAuthority("ROLE_MANAGER");
+				logger.info("관리자");
+			}else if(usersVo.getUser_pos().equals("사원")) {
+				authVo.setAuthority("ROLE_MEMBER");
+				logger.info("사원");
+			}
+			
+			
+			usersVo.setAuthList(authVo);
+			
+			int result = sService.addEmp(usersVo);
 
-	    if (result > 0) {
-	        logger.info("사용자 등록 성공!!!!!!");
-	        return ResponseEntity.ok().body(Collections.singletonMap("status", "success"));
-	    } else {
-	        logger.info("사용자 등록 실패~~~");
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("status", "failure"));
-	    }
-	}
+		    if (result > 0) {
+		        logger.info("사용자 등록 성공!!!!!!");
+		        return ResponseEntity.ok().body(Collections.singletonMap("status", "success"));
+		    } else {
+		        logger.info("사용자 등록 실패~~~");
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("status", "failure"));
+		    }
+		}
 	
 	//사용자 수정 
 	@ResponseBody
-	@RequestMapping(value = "/updateEmp", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateEmp", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<String>updateEmp(@RequestBody UsersVO usersVo) throws Exception{
 		 logger.debug(" @@@ updateEmp() 실행");
 		 
-		 //권한
-		 AuthoritiesVO authVo = new AuthoritiesVO();
-		authVo.setUsername(usersVo.getUsername());
-		
-		if(usersVo.getUser_pos().equals("운영자")) {
-			authVo.setAuthority("ROLE_ADMIN");
-			logger.info("운영자");
-		}else if(usersVo.getUser_pos().equals("관리자")) {
-			authVo.setAuthority("ROLE_MANAGER");
-			logger.info("관리자");
-		}else if(usersVo.getUser_pos().equals("사원")) {
-			authVo.setAuthority("ROLE_MEMBER");
-			logger.info("사원");
+		// 권한 설정
+		    AuthoritiesVO authVo = new AuthoritiesVO();
+		    authVo.setUsername(usersVo.getUsername());
+		    
+		    switch (usersVo.getUser_pos()) {
+		        case "운영자":
+		            authVo.setAuthority("ROLE_ADMIN");
+		            logger.info("운영자");
+		            break;
+		        case "관리자":
+		            authVo.setAuthority("ROLE_MANAGER");
+		            logger.info("관리자");
+		            break;
+		        case "사원":
+		            authVo.setAuthority("ROLE_MEMBER");
+		            logger.info("사원");
+		            break;
+		        default:
+		            logger.warn("알 수 없는 사용자 권한");
+		            break;
+		    }
+		    
+		    // authVo를 리스트로 설정
+		    List<AuthoritiesVO> authList = new ArrayList<>();
+		    authList.add(authVo);
+		    usersVo.setAuthList(authVo);
+		    
+		    // 서비스에서 사용자 정보 업데이트
+		    sService.updateEmp(usersVo);
+		    
+		    logger.debug("controller => 사용자 업데이트 출력 성공: {}" + usersVo);
+		    
+		    return ResponseEntity.ok("Update successful");
 		}
-		
-		logger.info("usersVo : "+usersVo);
-		
-		usersVo.setAuthList(authVo);
-		
-		sService.updateEmp(usersVo);
-		
-		 logger.debug("controller => 사용자 업데이트 출력 성공: {}" + usersVo);
-		
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
-	
-	
-	
-	
 	
 	//사용자 삭제
 	@ResponseBody
