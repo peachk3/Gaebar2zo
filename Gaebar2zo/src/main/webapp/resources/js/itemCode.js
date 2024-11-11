@@ -46,7 +46,8 @@
  	    }
     	
     	 $.ajax({
-    	        url: '/Styleboso/system/saveItemCode',  // 실제 서버 URL로 변경
+    	      //  url: '/Styleboso/system/saveItemCode',  // 실제 서버 URL로 변경
+    	        url: '/system/saveItemCode', 
     	        beforeSend: function(xhr) {
     	        	xhr.setRequestHeader(header, token);
     	        },
@@ -221,7 +222,8 @@
         const itemName = document.getElementById('s_cate_item_name').innerText;
 
         $.ajax({
-            url: "/Styleboso/system/updateItemCode",
+//            url: "/Styleboso/system/updateItemCode",
+            url: "/system/updateItemCode",
             beforeSend: function(xhr) {
                 xhr.setRequestHeader(header, token);
             },
@@ -286,7 +288,8 @@
             if (result.isConfirmed) {
             	
                 $.ajax({
-                    url: "/Styleboso/system/deleteItemCode",
+//                    url: "/Styleboso/system/deleteItemCode",
+                    url: "/system/deleteItemCode",
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader(header, token);
                     },

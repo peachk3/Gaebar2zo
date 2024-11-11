@@ -51,7 +51,7 @@
          </th>
 	         <th scope="col">사용자ID</th>
 	         <th scope="col">사용자명</th>
-	         <th scope="col">비밀번호</th>
+	         <th></th>
 	         <th scope="col">직책</th>
 	         <th scope="col">E-MAIL</th>
 	         <th scope="col">전화번호</th>
@@ -67,7 +67,7 @@
                		</td>
                		<td>${emptbl.username }</td>
                		<td>${emptbl.user_per_name}</td>
-               		<td>${emptbl.password }</td>
+               		<td></td>
                		<td>${emptbl.user_pos}</td>
                		<td>${emptbl.user_email  }</td>
                		<td>${emptbl.user_phone }</td>
@@ -180,9 +180,9 @@
             <input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title w-100 text-center" id="updateEmpModalLabel">사용자 정보 수정</h5>
+                    <h5 class="modal-title w-100 text-center" id="updateEmpModalLabel" style="font-size: 30px;">사용자 정보 수정</h5>
                     <button type="button" class="close" id="updateEmpModalCloseBtn" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="insert">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -193,22 +193,22 @@
                     </div>
                     <!-- 사용자명 -->
                     <div class="form-group mb-3">
-                        <label for="edit_user_per_name" style="margin-bottom: 5px;">사용자명</label>
+                        <label for="edit_user_per_name" style="margin-bottom: 5px;"><strong>사용자명</strong></label>
                         <input type="text" id="edit_user_per_name" class="form-control" readonly>
                     </div>
                     <!-- 사용자 이메일 -->
                     <div class="form-group mb-3">
-                        <label for="edit_user_email" style="margin-bottom: 5px;">사용자 이메일</label>
+                        <label for="edit_user_email" style="margin-bottom: 5px;"><strong>사용자 이메일</strong></label>
                         <input type="text" id="edit_user_email" class="form-control">
                     </div>
                     <!-- 사용자 전화번호 -->
                     <div class="form-group mb-3">
-                        <label for="edit_user_phone" style="margin-bottom: 5px;">사용자 전화번호</label>
+                        <label for="edit_user_phone" style="margin-bottom: 5px;"><strong>사용자 전화번호</strong></label>
                         <input type="text" id="edit_user_phone" class="form-control">
                     </div>
                     <!-- 사용자 직책 -->
                     <div class="form-group mb-3" >
-                        <label for="edit_user_pos" style="margin-bottom: 5px;">사용자 직책</label>
+                        <label for="edit_user_pos" style="margin-bottom: 5px;"><strong>사용자 직책</strong></label>
                         <select id="edit_user_pos" class="form-control">
                             <option value="운영자">운영자</option>
                             <option value="관리자">관리자</option>
@@ -217,7 +217,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelEditEmp">취소</button>
                     <button type="button" class="btn btn-primary" id="saveEditedEmp">저장</button>
                 </div>
             </div>
