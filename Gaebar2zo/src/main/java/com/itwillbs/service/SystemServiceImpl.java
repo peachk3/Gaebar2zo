@@ -84,6 +84,7 @@ public class SystemServiceImpl implements SystemService{
 	}
 	
 	//사용자 수정
+	@Transactional
 	@Override
 	public void updateEmp(UsersVO usersVo) throws Exception {
 		logger.info("service--> 사용자 업데이트");
@@ -188,18 +189,6 @@ public class SystemServiceImpl implements SystemService{
 		return icVo != null;
 	}
 
-
-
-
-	
-	
 	  
 }
 	
-
-	
-
-
-
-
-

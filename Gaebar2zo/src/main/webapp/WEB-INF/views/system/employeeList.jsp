@@ -41,12 +41,14 @@
          <th class="checkbox-column"> 
            	   <input class="form-check-input focus:outline-none focus:shadow-outline" type="checkbox" value="" id="selectAll" onclick = "toggleCheckboxes(this)"> 
          </th>
+
 	         <th>사용자ID</th>
 	         <th>사용자명</th>
 	         <th>비밀번호</th>
 	         <th>직책</th>
 	         <th>E-MAIL</th>
 	         <th>전화번호</th>
+
       	</tr>
       </thead>
       
@@ -58,12 +60,14 @@
 					<td class="text-center">
                   			<input class="form-check-input itemCheckbox focus:outline-none focus:shadow-outline" type="checkbox"> 
                		</td>
+
                		<td><span class="${cellClass}">${emptbl.username }</span></td>
                		<td><span class="${cellClass}">${emptbl.user_per_name}</span></td>
                		<td><span class="${cellClass}">${emptbl.password }</span></td>
                		<td><span class="${cellClass}">${emptbl.user_pos}</span></td>
                		<td><span class="${cellClass}">${emptbl.user_email  }</span></td>
                		<td><span class="${cellClass}">${emptbl.user_phone }</span></td>
+
                		<td></td>
 				</tr>	
 			</c:forEach>
@@ -193,9 +197,9 @@
             <input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title w-100 text-center" id="updateEmpModalLabel">사용자 정보 수정</h5>
+                    <h5 class="modal-title w-100 text-center" id="updateEmpModalLabel" style="font-size: 30px;">사용자 정보 수정</h5>
                     <button type="button" class="close" id="updateEmpModalCloseBtn" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="insert">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -206,22 +210,22 @@
                     </div>
                     <!-- 사용자명 -->
                     <div class="form-group mb-3">
-                        <label for="edit_user_per_name" style="margin-bottom: 5px;">사용자명</label>
+                        <label for="edit_user_per_name" style="margin-bottom: 5px;"><strong>사용자명</strong></label>
                         <input type="text" id="edit_user_per_name" class="form-control" readonly>
                     </div>
                     <!-- 사용자 이메일 -->
                     <div class="form-group mb-3">
-                        <label for="edit_user_email" style="margin-bottom: 5px;">사용자 이메일</label>
+                        <label for="edit_user_email" style="margin-bottom: 5px;"><strong>사용자 이메일</strong></label>
                         <input type="text" id="edit_user_email" class="form-control">
                     </div>
                     <!-- 사용자 전화번호 -->
                     <div class="form-group mb-3">
-                        <label for="edit_user_phone" style="margin-bottom: 5px;">사용자 전화번호</label>
+                        <label for="edit_user_phone" style="margin-bottom: 5px;"><strong>사용자 전화번호</strong></label>
                         <input type="text" id="edit_user_phone" class="form-control">
                     </div>
                     <!-- 사용자 직책 -->
                     <div class="form-group mb-3" >
-                        <label for="edit_user_pos" style="margin-bottom: 5px;">사용자 직책</label>
+                        <label for="edit_user_pos" style="margin-bottom: 5px;"><strong>사용자 직책</strong></label>
                         <select id="edit_user_pos" class="form-control">
                             <option value="운영자">운영자</option>
                             <option value="관리자">관리자</option>
@@ -230,7 +234,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelEditEmp">취소</button>
                     <button type="button" class="btn btn-primary" id="saveEditedEmp">저장</button>
                 </div>
 <!--                 <div class="flex justify-end items-center px-1 py-0 bg-white"> -->

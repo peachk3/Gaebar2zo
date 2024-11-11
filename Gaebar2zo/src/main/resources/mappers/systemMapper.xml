@@ -1,269 +1,178 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-  <mapper namespace="com.itwillbs.mapper.systemMapper">
-
-<!-- join절을 사용하기 위한 resultMap 모두 직접 설정하기 -->
-<!--  itemCodeVo -->
-<!-- <resultMap type="com.itwillbs.domain.ItemCodeVO" id="itemCGMap">
-	<id property="s_cate_item_code" column="s_cate_item_code" />
-	<result property="s_cate_item_name" column="s_cate_item_name"/>
-	<result property="m_cate_item_code" column="m_cate_item_code"/>
-	<collection property="codeGroupList" resultMap="codeGroupMap"></collection>
-</resultMap> -->
-
-<!-- CodeVO -->
-<!-- <resultMap type="com.itwillbs.domain.CodeVO" id="codeGroupMap">
-	<result property="group_code" column="group_code"/>
-	<result property="group_name" column="group_name"/>
-</resultMap> -->
-
-
-
-<!-- 시스템관리 (사용자 등록 - 전체리스트) -->
-<select id="employeeListAll" resultType="UsersVO">
-	<![CDATA[
-	select * from users
-	]]>
-	<where>
-	        <if test="searchType != null and keyword != null and keyword != ''">
-	            <choose>
-	                <when test="searchType == 'code'">
-	                    AND username LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'name'">
-	                    AND user_per_name LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'position'">
-	                    AND user_pos LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'email'">
-	                    AND user_email LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'phone'">
-	                    AND user_phone LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <otherwise>
-	                    AND (username LIKE CONCAT('%', #{keyword}, '%')
-	                    OR user_per_name LIKE CONCAT('%', #{keyword}, '%')
-	                    OR user_pos LIKE CONCAT('%', #{keyword}, '%')
-	                    OR user_email LIKE CONCAT('%', #{keyword}, '%'))
-	                    OR user_phone LIKE CONCAT('%', #{keyword}, '%'))
-	                </otherwise>
-	            </choose>
-	        </if>
-	    </where>
-	    <![CDATA[
-	ORDER BY username
-	LIMIT #{pageStart}, #{pageSize}
-	]]>
-</select>
-
-<select id="totalUserCount" resultType="int">
-	select count(*) from users
-	<where>
-	        <if test="searchType != null and keyword != null and keyword != ''">
-	            <choose>
-	                <when test="searchType == 'code'">
-	                    AND username LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'name'">
-	                    AND user_per_name LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'position'">
-	                    AND user_pos LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'email'">
-	                    AND user_email LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <when test="searchType == 'phone'">
-	                    AND user_phone LIKE CONCAT('%', #{keyword}, '%')
-	                </when>
-	                <otherwise>
-	                    AND (username LIKE CONCAT('%', #{keyword}, '%')
-	                    OR user_per_name LIKE CONCAT('%', #{keyword}, '%')
-	                    OR user_pos LIKE CONCAT('%', #{keyword}, '%')
-	                    OR user_email LIKE CONCAT('%', #{keyword}, '%'))
-	                    OR user_phone LIKE CONCAT('%', #{keyword}, '%'))
-	                </otherwise>
-	            </choose>
-	        </if>
-	    </where>
-</select>
-
-
-<!-- 이메일 중복체크 -->
-<select id="emailCheck" parameterType="String" resultType="int" > 
-	select count(*) from users where user_email = #{user_email}
-</select>
-
-<!-- 전화번호 중복체크 -->
-<select id="phoneCheck" parameterType="String" resultType="int">
-	select count(*)from users where user_phone = #{user_phone}
-</select>
-
-
-
- <!-- 직책권한 -->
-	<insert id="addEmpAuth" parameterType="AuthoritiesVO">
-	    insert into authorities (username, authority)
-	    values (#{username}, #{authority})
-	    </insert>
-
-
-
-<!--사용자ID (username) 생성 -->
-<select id="addEmpUsername" resultType="String">
-		select CONCAT('US',LPAD(COALESCE(MAX(CAST(SUBSTRING(username, 3) AS UNSIGNED)), 0) + 1, 4, '0'))
-    	from users
-</select>
-
-
-<!-- 사용자등록 -->
-<insert id="addEmp" parameterType="UsersVO">
-    insert into users (username, user_per_name, password, user_email, user_pos, user_phone)
-    values (
-        #{username},
-        #{user_per_name},
-        #{password},
-        #{user_email},
-        #{user_pos},
-        #{user_phone}
-    )
-</insert>
-
-<!-- 사용자 권한 업데이트 --> 
-<update id="updateEmpAuth">
-	UPDATE authorities a
-	JOIN users u ON a.username = u.username
-	SET a.authority = CASE
-   		 WHEN #{user_pos} = '운영자' THEN 'ROLE_ADMIN'
-   		 WHEN #{user_pos} = '관리자' THEN 'ROLE_MANAGER'
-    	 WHEN #{user_pos} = '사원' THEN 'ROLE_MEMBER'
-   		 ELSE a.authority
-	END
-	WHERE a.username = #{username}
-</update>
-
-<!--  사용자 업데이트 -->
-<update id="updateEmp">
-	update users
-	set 
-		user_phone = #{user_phone},
-		user_email = #{user_email},
-		user_pos = #{user_pos}
-	where username = #{username}
-</update>
-
-
-<!-- 사용자 권한 삭제 -->
-<delete id="deleteEmpAuth" parameterType="UsersVO">
- delete from authorities
-    where username in
-    <foreach item="username" index="index" collection="list" open="(" separator="," close=")">
-        #{username}
-    </foreach>
-</delete>
-
-
-<!-- 사용자 삭제 -->
-<delete id="deleteEmp" parameterType="UsersVO">
-    delete from users
-    where username in
-    <foreach item="username" index="index" collection="list" open="(" separator="," close=")">
-        #{username}
-    </foreach>
-</delete>
-
-<!-- 공통코드 전체 리스트 출력-->
-<select id="codeListAll" resultType="CodeVO">
-	select * from code
-</select>
-
-<!-- 공통코드 등록 -->
-<insert id="saveGroupCode" parameterType="CodeVO">
-	insert into code(group_code, group_name) 
-	values(#{group_code}, #{group_name})
-</insert>
-
-<!--공통코드(수정/업데이트)  -->
-<update id="updateCode">
-	update code
-	set  group_name=#{group_name}
-	where group_code=#{group_code};
-</update>
-
-
-<!-- 공통 그룹코드  (삭제) -->
-<delete id="deleteCode" parameterType="CodeVO">
-    delete from code
-    where group_code in 
-    <foreach item="group_code" index="index" collection="list"  open="(" separator="," close=")">
-        #{group_code}
-    </foreach>
-</delete>
-
-
-
-
-
-
-
-
-<!--  공통코드 전체 리스트에서 품목공통 코드 리스트 -->
-<select id="itemCodeListAll" resultType="ItemCodeVO">
-	select * from item_code 
-	where m_cate_item_code = #{group_code}
-</select>
-
-<!-- 품목공통코드 리스트 (수정/업데이트)  -->
-<update id="updateItemCode">
-	update item_code
-	set  s_cate_item_name=#{s_cate_item_name}
-	where s_cate_item_code=#{s_cate_item_code};
-</update>
-
-<!-- 공통 품목코드 리스트 (삭제) -->
-<delete id="deleteItemCode">
-    DELETE FROM item_code
-    WHERE s_cate_item_code IN 
-    <foreach item="s_cate_item_code" collection="list" open="(" separator="," close=")">
-        #{s_cate_item_code}
-    </foreach>
-</delete>
-
-<!-- 공통 품목코드 리스트 (등록) -->
-
-<insert id="saveItemCode" parameterType="ItemCodeVO">
-	insert into item_code (s_cate_item_code, s_cate_item_name, m_cate_item_code)
-    values (
-        #{s_cate_item_code}, 
-        #{s_cate_item_name}, 
-        substring(#{s_cate_item_code}, 1, 2)
-    )
-</insert>
-
-<!-- 공통품목코드 유효성&중복체크 검사 -->
- <!-- <select id="getItemCodeAndCheck" parameterType="String" resultType="ItemCodeVO">
-	 select 
-        ic.s_cate_item_code, 
-        ic.s_cate_item_name, 
-        ic.m_cate_item_code
-    from 
-        item_code ic
-    join 
-        code c 
-    on 
-        ic.m_cate_item_code = c.group_code
-    where 
-        ic.s_cate_item_code = #{group_code}
-</select> -->
- 
-
-
-
-
-
+<mapper namespace="com.itwillbs.mapper.systemMapper">
+	<!-- AuthoritiesVO -->
+	<resultMap type="com.itwillbs.domain.AuthoritiesVO"
+		id="authMap">
+		<id property="username" column="username" />
+		<result property="authority" column="authority" />
+		<collection property="updateEmpList" resultMap="usersMap" />
+	</resultMap>
+	
+	<!-- UsersVO -->
+	<resultMap type="com.itwillbs.domain.UsersVO" id="usersMap">
+		<result property="user_per_name" column="user_per_name" />
+		<result property="password" column="password" />
+		<result property="user_email" column="user_email" />
+		<result property="user_pos" column="user_pos" />
+		<result property="user_phone" column="user_phone" />
+		<result property="enabled" column="enabled" />
+	</resultMap>
+	
+	<!-- join절을 사용하기 위한 resultMap 모두 직접 설정하기 -->
+	<!-- itemCodeVo -->
+	<!-- <resultMap type="com.itwillbs.domain.ItemCodeVO" id="itemCGMap"> <id 
+		property="s_cate_item_code" column="s_cate_item_code" /> <result property="s_cate_item_name" 
+		column="s_cate_item_name"/> <result property="m_cate_item_code" column="m_cate_item_code"/> 
+		<collection property="codeGroupList" resultMap="codeGroupMap"></collection> 
+		</resultMap> -->
+	<!-- CodeVO -->
+	<!-- <resultMap type="com.itwillbs.domain.CodeVO" id="codeGroupMap"> <result 
+		property="group_code" column="group_code"/> <result property="group_name" 
+		column="group_name"/> </resultMap> -->
+		
+	<!-- 시스템관리 (사용자 등록 - 전체리스트) -->
+	<select id="employeeListAll" resultType="UsersVO">
+<![CDATA[ select * from users ]]>
+		<where>
+			<if
+				test="searchType != null and keyword != null and keyword != ''">
+				<choose>
+					<when test="searchType == 'code'"> AND username LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<when test="searchType == 'name'"> AND user_per_name LIKE CONCAT('%', #{keyword},
+						'%') </when>
+					<when test="searchType == 'position'"> AND user_pos LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<when test="searchType == 'email'"> AND user_email LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<when test="searchType == 'phone'"> AND user_phone LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<otherwise> AND (username LIKE CONCAT('%', #{keyword}, '%') OR
+						user_per_name LIKE CONCAT('%', #{keyword}, '%') OR user_pos LIKE
+						CONCAT('%', #{keyword}, '%') OR user_email LIKE CONCAT('%',
+						#{keyword}, '%')) OR user_phone LIKE CONCAT('%', #{keyword}, '%'))
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+		
+<![CDATA[ ORDER BY username LIMIT #{pageStart}, #{pageSize} ]]>
+	</select>
+	<select id="totalUserCount" resultType="int">
+		select count(*) from users
+		<where>
+			<if
+				test="searchType != null and keyword != null and keyword != ''">
+				<choose>
+					<when test="searchType == 'code'"> AND username LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<when test="searchType == 'name'"> AND user_per_name LIKE CONCAT('%', #{keyword},
+						'%') </when>
+					<when test="searchType == 'position'"> AND user_pos LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<when test="searchType == 'email'"> AND user_email LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<when test="searchType == 'phone'"> AND user_phone LIKE CONCAT('%', #{keyword}, '%')
+					</when>
+					<otherwise> AND (username LIKE CONCAT('%', #{keyword}, '%') OR
+						user_per_name LIKE CONCAT('%', #{keyword}, '%') OR user_pos LIKE
+						CONCAT('%', #{keyword}, '%') OR user_email LIKE CONCAT('%',
+						#{keyword}, '%')) OR user_phone LIKE CONCAT('%', #{keyword}, '%'))
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</select>
+	
+	<!-- 이메일 중복체크 -->
+	<select id="emailCheck" parameterType="String" resultType="int">
+		select count(*) from users where user_email = #{user_email} </select>
+		
+	<!-- 전화번호 중복체크 -->
+	<select id="phoneCheck" parameterType="String" resultType="int">
+		select count(*)from users where user_phone = #{user_phone} </select>
+		
+	<!-- 직책권한 -->
+	<insert id="addEmpAuth" parameterType="AuthoritiesVO"> insert into authorities
+		(username, authority) values (#{username}, #{authority}) </insert>
+		
+	<!-- 사용자ID (username) 생성 -->
+	<select id="addEmpUsername" resultType="String"> select
+		CONCAT('US',LPAD(COALESCE(MAX(CAST(SUBSTRING(username, 3) AS
+		UNSIGNED)), 0) + 1, 4, '0')) from users </select>
+		
+	<!-- 사용자등록 -->
+	<insert id="addEmp" parameterType="UsersVO"> insert into users (username,
+		user_per_name, password, user_email, user_pos, user_phone) values (
+		#{username}, #{user_per_name}, #{password}, #{user_email},
+		#{user_pos}, #{user_phone} ) </insert>
+		
+	<update id="updateEmp" parameterType="UsersVO"> UPDATE users SET
+		user_phone = #{user_phone}, user_email = #{user_email}, user_pos =
+		#{user_pos} WHERE username = #{username} </update>
+		
+	<update id="updateEmpAuth" parameterType="AuthoritiesVO"> UPDATE authorities SET
+		authority = CASE WHEN #{user_pos} = '운영자' THEN 'ROLE_ADMIN' WHEN
+		#{user_pos} = '관리자' THEN 'ROLE_MANAGER' WHEN #{user_pos} = '사원' THEN
+		'ROLE_MEMBER' ELSE authority END WHERE username = #{username} </update>
+		
+	<!-- 사용자 권한 삭제 -->
+	<delete id="deleteEmpAuth" parameterType="UsersVO">
+		delete from authorities where username in
+		<foreach item="username" index="index" collection="list"
+			open="(" separator="," close=")"> #{username} </foreach>
+	</delete>
+	
+	<!-- 사용자 삭제 -->
+	<delete id="deleteEmp" parameterType="UsersVO">
+		delete from users where username in
+		<foreach item="username" index="index" collection="list"
+			open="(" separator="," close=")"> #{username} </foreach>
+	</delete>
+	
+	<!-- 공통코드 전체 리스트 출력 -->
+	<select id="codeListAll" resultType="CodeVO"> select * from code </select>
+	
+	<!-- 공통코드 등록 -->
+	<insert id="saveGroupCode" parameterType="CodeVO"> insert into
+		code(group_code, group_name) values(#{group_code}, #{group_name})
+	</insert>
+	
+	<!-- 공통코드(수정/업데이트) -->
+	<update id="updateCode"> update code set group_name=#{group_name} where
+		group_code=#{group_code}; </update>
+		
+	<!-- 공통 그룹코드 (삭제) -->
+	<delete id="deleteCode" parameterType="CodeVO">
+		delete from code where group_code in
+		<foreach item="group_code" index="index" collection="list"
+			open="(" separator="," close=")"> #{group_code} </foreach>
+	</delete>
+	
+	<!-- 공통코드 전체 리스트에서 품목공통 코드 리스트 -->
+	<select id="itemCodeListAll" resultType="ItemCodeVO"> select * from item_code
+		where m_cate_item_code = #{group_code} </select>
+		
+	<!-- 품목공통코드 리스트 (수정/업데이트) -->
+	<update id="updateItemCode"> update item_code set
+		s_cate_item_name=#{s_cate_item_name} where
+		s_cate_item_code=#{s_cate_item_code}; </update>
+		
+	<!-- 공통 품목코드 리스트 (삭제) -->
+	<delete id="deleteItemCode">
+		DELETE FROM item_code WHERE s_cate_item_code IN
+		<foreach item="s_cate_item_code" collection="list" open="(" separator="," close=")"> 
+		#{s_cate_item_code} 
+		</foreach>
+	</delete>
+	<!-- 공통 품목코드 리스트 (등록) -->
+	<insert id="saveItemCode" parameterType="ItemCodeVO"> insert into item_code
+		(s_cate_item_code, s_cate_item_name, m_cate_item_code) values (
+		#{s_cate_item_code}, #{s_cate_item_name},
+		substring(#{s_cate_item_code}, 1, 2) ) </insert>
+		
+	<!-- 공통품목코드 유효성&중복체크 검사 -->
+	<!-- <select id="getItemCodeAndCheck" parameterType="String" resultType="ItemCodeVO"> 
+		select ic.s_cate_item_code, ic.s_cate_item_name, ic.m_cate_item_code from 
+		item_code ic join code c on ic.m_cate_item_code = c.group_code where ic.s_cate_item_code 
+		= #{group_code} </select> -->
 </mapper>

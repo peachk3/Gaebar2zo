@@ -59,33 +59,4 @@ public interface SystemDAO {
 	ItemCodeVO getItemCodeAndCheck(String s_cate_item_code) throws Exception;
 
 	
-
-	
-
-	
-
-	
-
-
-
-	
-
-
-
-
-
-
-
-
-	
-
-
-	
-
-
-	
-
-	 
-
-
 }

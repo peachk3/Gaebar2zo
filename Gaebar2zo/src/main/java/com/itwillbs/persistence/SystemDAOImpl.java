@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.itwillbs.domain.AuthoritiesVO;
 import com.itwillbs.domain.CodeVO;
@@ -86,24 +87,24 @@ public class SystemDAOImpl implements SystemDAO{
 
 	//사용자 수정
 	@Override
-	public void updateEmp(UsersVO usersVo) throws Exception {
-		logger.info("dao --> 사용자 업데이트");
-		
-		String userPos = sqlSession.selectOne(NAMESPACE+"updateEmpAuth");
-		logger.info("userPos" + userPos);
-	
-		AuthoritiesVO authVo = usersVo.getAuthList();
-		
-		authVo.setUsername(userPos);
-		usersVo.setUsername(userPos);
-		
-		sqlSession.update(NAMESPACE+"updateEmpAuth", authVo);
-		sqlSession.update(NAMESPACE +"updateEmp",usersVo);
-		logger.info("dao -> 사용자 등록");
-		
-		
-	}
-	
+		public void updateEmp(UsersVO usersVo) throws Exception {
+		    logger.info("dao --> 사용자 업데이트");
+
+		    sqlSession.update(NAMESPACE + "updateEmp", usersVo);
+		    logger.info("dao -> 사용자 정보 업데이트 완료");
+
+		    // 권한 정보 업데이트
+		    AuthoritiesVO authVo = usersVo.getAuthList();
+		    if (authVo != null) {
+		        authVo.setUsername(usersVo.getUsername());  // authVo에 username 설정
+		        sqlSession.update(NAMESPACE + "updateEmpAuth", authVo);
+		        logger.info("dao -> 권한 정보 업데이트 완료");
+		    } else {
+		        logger.warn("권한 정보를 업데이트할 수 없습니다.");
+		    }
+		}
+		    
+		    
 	//사용자 삭제
 	@Override
 	public void deleteEmp(List<String> users) throws Exception {
@@ -194,16 +195,6 @@ public class SystemDAOImpl implements SystemDAO{
 		
 		return sqlSession.selectOne(NAMESPACE + "getItemCodeAndCheck", s_cate_item_code);
 	}
-
-	
-	  
-
-
-
-
-
-
-
 
 
 }
