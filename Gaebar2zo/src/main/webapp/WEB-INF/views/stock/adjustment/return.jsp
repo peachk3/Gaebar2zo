@@ -1,121 +1,72 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ include file="../../include/header.jsp" %>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<head>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
 
 <body class="bg-gray-100 font-sans">
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <h1 class="text-2xl font-semibold text-gray-800 mb-6">재고 조정 반품</h1>
+            <h1 class="text-3xl font-semibold text-gray-800 mb-6">반품 관리</h1>
             
             <!-- Search Form -->
-<form action="/stock/adjustment/return" method="get" class="mb-8">
-    <div class="flex flex-wrap -mx-3 mb-4">
-        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <div class="input-group w-500">
-                <div class="input-group-prepend">
-                    <select class="form-select custom-select-radius custom-select-width" id="searchType" name="searchType">
-                        <option value="" <c:if test="${empty searchType}">selected</c:if>>전체</option>
-                        <option value="code" <c:if test="${searchType eq 'code'}">selected</c:if>>재고 번호</option>
-                        <option value="name" <c:if test="${searchType eq 'name'}">selected</c:if>>품목명</option>
-                        <option value="warehouse" <c:if test="${searchType eq 'warehouse'}">selected</c:if>>창고명</option>
-                        <option value="color" <c:if test="${searchType eq 'color'}">selected</c:if>>색상</option>
-                    </select>
-                </div>
-                <input type="text" class="form-control" placeholder="검색어를 입력하세요" name="keyword" value="${keyword}">
-                <button class="btn btn-outline-secondary" type="submit">검색</button>
-            </div>
-        </div>
-        <div class="w-full md:w-1/2 px-3 flex justify-end items-center space-x-2" style="margin-bottom:15px;">
-            <button type="button" class="btn btn-primary" onclick="location.href='/stock/adjustment/returnAdd'">
-                등록
-            </button>
-            <button type="button" id="deleteItemBtn" name="deleteItemBtn" class="btn btn-primary" value="삭제">
-                삭제
-            </button>
-            <div x-data="{ open: false }" class="relative inline-block text-left">
-                <button @click="toggleMenu()" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-3 inline-flex items-center">
-                    <span>상태 변경</span>
-                    <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div id="statusMenu" class="hidden absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-3 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-				    <div class="py-2" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-				        <a href="#" id="preReceiveBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-gray-900" role="menuitem">반품 예정</a>
-				        <a href="#" id="completedReceiveBtn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-gray-900" role="menuitem">반품 완료</a>
-				    </div>
-				</div>
-            </div>
-        </div>
-    </div>
-</form>
+		<form action="/stock/adjustment/return" method="get" class="form-inline mt-3">
+     		<div class="flex flex-wrap -mx-3 mb-4 md:flex-nowrap">
+		        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+		            <div class="input-group w-500">
+		                <div class="input-group-prepend">
+		                    <select class="form-select custom-select-radius custom-select-width" id="searchType" name="searchType">
+		                        <option value="" <c:if test="${empty searchType}">selected</c:if>>전체</option>
+		                        <option value="code" <c:if test="${searchType eq 'code'}">selected</c:if>>재고 번호</option>
+		                        <option value="name" <c:if test="${searchType eq 'name'}">selected</c:if>>품목명</option>
+		                        <option value="warehouse" <c:if test="${searchType eq 'warehouse'}">selected</c:if>>창고명</option>
+		                        <option value="color" <c:if test="${searchType eq 'color'}">selected</c:if>>색상</option>
+		                    </select>
+		                </div>
+		                <input type="text" class="form-control" placeholder="검색어를 입력하세요" name="keyword" value="${keyword}">
+		                <button class="btn btn-outline-secondary" type="submit">검색</button>
+		            </div>
+		        </div>
+		    </div>
+		</form>
 <div id="tableContainer" class="transition-all duration-300 ease-in-out" >
             <!-- Table -->
-            <div class="overflow-x-hidden bg-white rounded-lg border overflow-y-hidden relative" style="height: 405px;">
-                <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <div class="overflow-x-hidden bg-white border overflow-y-hidden relative" id="dynamicTable">
+            	<table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-hover relative">
                     <thead>
-                        <tr class="text-left">
-                            <th class="py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-100">
-                                <label class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer">
-                                    <input type="checkbox" class="form-check-input focus:outline-none focus:shadow-outline" id="selectAll" onclick="toggleCheckboxes(this)">
-                                </label>
+                        <tr class="text-center">
+                            <th class="checkbox-column">
+                            	<input type="checkbox" class="form-check-input focus:outline-none focus:shadow-outline" id="selectAll" onclick="toggleCheckboxes(this)">
                             </th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">반품 번호</th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">반품 거래처</th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">품목명</th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">반품 수량</th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">반품 신청일</th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">반품(예정)일</th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">반품 사유</th>
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">상태</th>
+                            <th>반품 번호</th>
+                            <th>반품 거래처</th>
+                            <th>품목명</th>
+                            <th>반품 수량</th>
+                            <th>반품 신청일</th>
+                            <th>반품(예정)일</th>
+                            <th>반품 사유</th>
+                            <th>상태</th>
                         </tr>
                     </thead>
+                    
+						<c:set var="cellClass" value="clickable-cell text-gray-700 px-2 py-2 flex items-center" />
+                    
                     <tbody class="bg-white divide-y divide-gray-200">
                         <c:forEach var="re" items="${re}">
                             <c:forEach var="item" items="${re.itemList}">
                                 <c:forEach var="inchange" items="${re.inchangeList}">
                                     <c:forEach var="goods" items="${item.tranGoodsList}">
                                         <tr>
-                                            <td class="border-dashed border-t border-gray-200 px-3">
-                                                <div class="form-check text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer">
-                                                    <input type="checkbox" class="form-checkbox-input rowCheckbox focus:outline-none focus:shadow-outline" value="" id="flexCheckDefault${goods.goods_num}">
-                                                </div>
+                                            <td class="text-center">
+                                            	<input type="checkbox" class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" value="" id="flexCheckDefault${goods.goods_num}">
                                             </td>
-                                            <td class="border-dashed border-t border-gray-200 userId">
-                                                <span class="clickable-cell text-gray-700 px-6 py-3 flex items-center">${re.tran_num}</span>
-                                            </td>
-                                            <td class="border-dashed border-t border-gray-200">
-                                                <span class="clickable-cell text-gray-700 px-6 py-3 flex items-center">${re.cli_num}</span>
-                                            </td>
-                                            <td class="border-dashed border-t border-gray-200">
-                                                <span class="clickable-cell text-gray-700 px-6 py-3 flex items-center">${item.item_name}</span>
-                                            </td>
-                                            <td class="border-dashed border-t border-gray-200">
-                                                <span class="clickable-cell text-gray-700 px-6 py-3 flex items-center">${goods.goods_qty}</span>
-                                            </td>
-                                            <td class="border-dashed border-t border-gray-200">
-                                                <span class="clickable-cell text-gray-700 px-6 py-3 flex items-center">${re.regdate}</span>
-                                            </td>
-                                            <td class="border-dashed border-t border-gray-200">
-                                                <span class="clickable-cell text-gray-700 px-6 py-3 flex items-center">${re.tran_date}</span>
-                                            </td>
-                                            <td class="border-dashed border-t border-gray-200">
-                                                <span class="clickable-cell text-gray-700 px-6 py-3 flex items-center">${re.comm}</span>
-                                            </td>
-                                            <td class="border-dashed border-t border-gray-200">
-                                                <span class="px-6 py-3 flex items-center">
-                                                    <span class="clickable-cell px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${re.pro_status eq '반품 예정' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}">
-                                                        ${re.pro_status}
-                                                    </span>
-                                                </span>
-                                            </td>
-                                       <input type="hidden" class="top-tran-num" value="${re.top_tran_num}">
+                                            <td><span class="${cellClass}">${re.tran_num}</span></td>
+                                            <td><span class="${cellClass}">${re.cli_num}</span></td>
+                                            <td><span class="${cellClass}">${item.item_name}</span></td>
+                                            <td><span class="${cellClass}">${goods.goods_qty}</span></td>
+                                            <td><span class="${cellClass}">${re.regdate}</span></td>
+                                            <td><span class="${cellClass}">${re.tran_date}</span></td>
+                                            <td><span class="${cellClass}">${re.comm}</span></td>
+                                            <td><span class="${cellClass}">${re.pro_status}</span></td>
+											<input type="hidden" class="top-tran-num" value="${re.top_tran_num}">
                                         </tr>
                                     </c:forEach>
                                 </c:forEach>
@@ -126,38 +77,56 @@
             </div>
             </div>
             <!-- Pagination -->
-            <div>
+            <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                 <c:url var="pageUrl" value="/stock/adjustment/return">
                     <c:param name="searchType" value="${searchType}"/>
                     <c:param name="keyword" value="${keyword}"/>
                 </c:url>
-                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                    <c:if test="${pageVO.prev}">
-                        <a href="${pageUrl}&page=${pageVO.startPage - 1}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span class="sr-only">Previous</span>
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                            </svg>
+            <nav aria-label="Page navigation" class="pagination-container">
+            <ul class="pagination justify-content-center">
+                <c:if test="${pageVO.prev}">
+                    <li class="page-item">
+                        <a class="page-link" href="${pageUrl}&page=${pageVO.startPage - 1}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
                         </a>
-                    </c:if>
-                    <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
-                        <a href="${pageUrl}&page=${i}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${pageVO.cri.page == i ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}">
-                            ${i}
+                    </li>
+                </c:if>
+                <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
+                    <li class="page-item ${pageVO.cri.page == i ? 'active' : ''}">
+                        <a class="page-link" href="${pageUrl}&page=${i}">${i}</a>
+                    </li>
+                </c:forEach>
+                <c:if test="${pageVO.next && pageVO.endPage > 0}">
+                    <li class="page-item">
+                        <a class="page-link" href="${pageUrl}&page=${pageVO.endPage + 1}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
                         </a>
-                    </c:forEach>
-                    <c:if test="${pageVO.next && pageVO.endPage > 0}">
-                        <a href="${pageUrl}&page=${pageVO.endPage + 1}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span class="sr-only">Next</span>
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                            </svg>
-                        </a>
-                    </c:if>
-                </nav>
+                    </li>
+                </c:if>
+            </ul>
+        	</nav>
             </div>
-
+            <div class="flex justify-between items-center px-1 py-0 bg-white">
+    <div class="flex gap-2">
+        <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-left" id="preReceiveBtn">
+            <span>반품예정</span>
+        </button>
+        <button type="button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center" id="completedReceiveBtn">
+            <span>반품완료</span>
+        </button>
+    </div>
+    <div class="flex gap-2">
+        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onclick="location.href='/stock/adjustment/returnAdd'">
+            <span>등록</span>
+        </button>
+        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteItemBtn">
+            <span>삭제</span>
+        </button>
     </div>
 </div>
+    </div>
+</div>
+
 <!-- Modal -->
     <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -338,7 +307,7 @@ $(document).ready(function() {
 //     $(".status-buttons .btn").click(function() {
 //         const pro_status = $(this).text().trim();
 
-		$("#preReceiveBtn, #completedReceiveBtn").click(function() {
+		$("#preReturnBtn, #completedReturnpreReceiveBtnBtn").click(function() {
 		const pro_status = $(this).text().trim();
 
         const checkedCheckboxes = $('input[type="checkbox"].rowCheckbox:checked');

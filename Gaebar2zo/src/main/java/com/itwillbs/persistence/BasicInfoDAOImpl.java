@@ -148,6 +148,14 @@ public class BasicInfoDAOImpl implements BasicInfoDAO {
 		sqlSession.insert(NAMESPACE + "insertWarehouse", wcvo);
 	}
 
+	@Override
+	public void createZone(String whCode, String whName) throws Exception {
+		logger.debug("createZone() 실행");
+		
+		
+		sqlSession.insert(NAMESPACE + "createZone", Map.of("wh_code", whCode, "wh-name",whName));
+	}
+
 	// 창고 삭제
 	@Override
 	public void warehouseDelete(List<String> whNums) throws Exception {

@@ -9,8 +9,8 @@
 					<div class="card-body">
 						<form class="row g-3 needs-validation" id="fm1" novalidate>
 						<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
-							<div>
-								<h5>품목 등록</h5>
+							<div class="headerClass">
+								<h5 class="text-3xl font-semibold text-gray-800 mb-6">품목 등록</h5>
 							</div>
 <!-- 							<div class="col-md-6"> -->
 <!-- 								<label for="item_num" class="form-label"> 품목 코드 </label>  -->
@@ -87,6 +87,9 @@
 								<label for="item_comm" class="form-label"> 비고 </label> 
 								<input type="text" class="form-control" id="comm" name="comm">
 							</div>
+							<div class="flex gap-2">
+								<button type="submit" id="submitFormBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" >등록</button>
+							</div>
 					</form>
 				</div>
 			</div>
@@ -125,9 +128,7 @@
 			</div>
 		</div>
 
-	<div class="col-12 text-right">
-			<button class="btn btn-primary" type="submit" id="submitFormBtn">등록</button>
-	</div>
+
 
 <style>
 #money {

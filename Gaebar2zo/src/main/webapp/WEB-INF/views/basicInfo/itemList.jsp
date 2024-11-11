@@ -1,11 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ include file="../include/header.jsp"%>
-<%@ taglib prefix="sec"
-	uri="http://www.springframework.org/security/tags"%>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 	
 <head>
 	<style>
@@ -23,22 +21,10 @@
 	</style>
 </head>
 
-
-<!-- 	<div class="d-grid gap-2 d-md-flex justify-content-md-end" -->
-<!-- 		style="margin-right: 10px; padding: 10px;"> -->
-<%-- 		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')"> --%>
-<!-- 			<input type="button" class="btn btn-primary" value="등록" -->
-<!-- 				onclick="location.href='/basicInfo/itemAdd'"> -->
-<!-- 			<input type="button" id="deleteItemBtn" name="deleteItemBtn" -->
-<!-- 				class="btn btn-primary" value="삭제"> -->
-<%-- 		</sec:authorize> --%>
-<!-- 	</div> -->
-	
-
 <body class="bg-gray-100 font-sans">
 	<div class="container mx-auto px-4 py-8">
 		<div class="bg-white rounded-lg shadow-lg p-6">
-			<h1 class="text-2xl font-semibold text-gray-800 mb-6">품목 리스트</h1>
+			<h1 class="text-3xl font-semibold text-gray-800 mb-6">품목 관리</h1>
 
 			<!-- Search Form -->
 			<form action="/basicInfo/itemList" method="get" class="form-inline mt-3">
@@ -47,123 +33,105 @@
 						<div class="input-group w-500">
 							<div class="input-group-prepend">
 								<select class="form-select custom-select custom-select-width" id="searchType" name="searchType">
-									<option value=""
-										<c:if test="${empty searchType}">selected</c:if>>전체</option>
-									<option value="code"
-										<c:if test="${searchType eq 'code'}">selected</c:if>>품목
-										코드</option>
-									<option value="name"
-										<c:if test="${searchType eq 'name'}">selected</c:if>>품목명</option>
-									<option value="type"
-										<c:if test="${searchType eq 'type'}">selected</c:if>>제품
-										유형</option>
+									<option value="" <c:if test="${empty searchType}">selected</c:if>>전체</option>
+									<option value="code" <c:if test="${searchType eq 'code'}">selected</c:if>>품목코드</option>
+									<option value="name" <c:if test="${searchType eq 'name'}">selected</c:if>>품목명</option>
+									<option value="type" <c:if test="${searchType eq 'type'}">selected</c:if>>제품유형</option>
 								</select>
 							</div>
 							<input type="text" class="form-control" placeholder="검색어를 입력하세요" name="keyword" value="${keyword}">
 							<button class="btn btn-outline-secondary" type="submit">검색</button>
 						</div>
 					</div>
-				<div class="w-full md:w-1/2 px-3 flex justify-end items-center space-x-2" >
-					<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-						<input type="button" class="btn btn-primary" value="등록" onclick="location.href='/basicInfo/itemAdd'">
-						<input type="button" class="btn btn-primary" style="background-color:white; color:black;" id="deleteItemBtn" name="deleteItemBtn" value="삭제">
-					</sec:authorize>
-				</div>
 			</div>
 		</form>
 
 	<div id="tableContainer" class="transition-all duration-300 ease-in-out">
-		<div class="overflow-x-hidden bg-white border 1px solid overflow-y-auto relative" style="height: 405px;">
-             <table class="table table-hover border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <div class="overflow-x-hidden bg-white border overflow-y-hidden relative" id="dynamicTable">
+            	<table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-hover relative">
 				<thead>
-					<tr class="text-left py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-100">
-						<th class="py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-100">
-							<div class="form-check">
-                  <input class="form-check-input focus:outline-none focus:shadow-outline" type="checkbox" value="" id="selectAll" onclick = "toggleCheckboxes(this)"> 
-            	</div>
+					<tr class="text-center">
+						<th class="checkbox-column">
+                  <input type="checkbox" class="form-check-input focus:outline-none focus:shadow-outline" id="selectAll" onclick = "toggleCheckboxes(this)"> 
 						</th>
-						<th scope="col">품목 코드</th>
-						<th scope="col">거래처 코드</th>
-						<th scope="col">품목명</th>
-						<th scope="col">제품 유형</th>
-						<th scope="col">매입 단가 (원)</th>
-						<th scope="col">매출 단가 (원)</th>
-						<th scope="col">재질</th>
-						<th scope="col">비고</th>
+						<th>품목 코드</th>
+						<th>거래처 코드</th>
+						<th>품목명</th>
+						<th>제품 유형</th>
+						<th>매입 단가 (원)</th>
+						<th>매출 단가 (원)</th>
+						<th>재질</th>
+						<th>비고</th>
 					</tr>
 				</thead>
+				
+					<c:set var="cellClass" value="clickable-cell text-gray-700 px-2 py-2 flex items-center" />
+
 				<tbody class="bg-white divide-y divide-gray-200">
 					<c:forEach var="itl" items="${itemList }">
 						<tr>
-							<td class="border-dashed border-t border-gray-200 px-3">
-								<div class="form-check">
-                           <input class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" type="checkbox" value="" id="flexCheckDefault${cli.cli_num}"> 
-                          <!--  <label class="form-check-label" for="flexCheckChecked"> Checked checkbox </label> -->
-                       </div>
+							<td class="text-center">
+                           <input type="checkbox" class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" type="checkbox" value="" id="flexCheckDefault${cli.cli_num}"> 
 							</td>
-							<td class="clickable-cell">${itl.item_num }</td>
-							<td class="clickable-cell">${itl.item_cli_code }</td>
-							<td class="clickable-cell">${itl.item_name }</td>
-							<td class="clickable-cell">${itl.group_name }</td>
-							<td class="clickable-cell">
-							    <fmt:formatNumber value="${itl.item_purchase_price}" type="number" pattern="#,###"/>
-							</td>
-							<td class="clickable-cell">
-							    <fmt:formatNumber value="${itl.item_sale_price}" type="number" pattern="#,###"/>
-							</td>
-							<td class="clickable-cell">${itl.item_mat }</td>
-							<td class="clickable-cell">${itl.comm }</td>
+							<td><span class="${cellClass}">${itl.item_num }</span></td>
+							<td><span class="${cellClass}">${itl.item_cli_code }</span></td>
+							<td><span class="${cellClass}">${itl.item_name }</span></td>
+							<td><span class="${cellClass}">${itl.group_name }</span></td>
+							<td><span class="${cellClass}">${itl.item_purchase_price }</span></td>
+							<td><span class="${cellClass}">${itl.item_sale_price }</span></td>
+							<td><span class="${cellClass}">${itl.item_mat }</span></td>
+							<td><span class="${cellClass}">${itl.comm }</span></td>
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
 			</div>
 		</div>
-
-
+		<!-- Pagination -->
 		<div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-			<nav aria-label="Page navigation" class="pagination-container">
-		      <ul class="pagination justify-content-center">
-		         <c:if test="${pageVO.prev}">
-		            <li class="page-item">
-		         <c:url var="prevUrl" value="/basicInfo/itemList">
-		          <c:param name="page" value="${pageVO.startPage - 1}" />
-		          <c:param name="searchType" value="${searchType}" />
-		          <c:param name="keyword" value="${keyword}" />
-		        </c:url>
-		        <a class="page-link" href="${prevUrl}" aria-label="Previous">
-		          <span aria-hidden="true">&laquo;</span>
-		        </a>
-		          </li>
-		         </c:if>
-		         
-		         <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
-		            <c:url var="pageUrl" value="/basicInfo/itemList">
-		        <c:param name="page" value="${i}" />
-		        <c:param name="searchType" value="${searchType}" />
-		        <c:param name="keyword" value="${keyword}" />
-		      </c:url>
-		
-					<li class="page-item ${pageVO.cri.page == i ? 'active' : ''}">
-						<a class="page-link" href="${pageUrl}">${i}</a>
-					</li>
-				</c:forEach>
-		         <c:if test="${pageVO.next && pageVO.endPage > 0}">
-		           <li class="page-item">
-			        <c:url var="nextUrl" value="/basicInfo/itemList">
-			          <c:param name="page" value="${pageVO.endPage + 1}" />
-			          <c:param name="searchType" value="${searchType}" />
-			          <c:param name="keyword" value="${keyword}" />
-			        </c:url>
-		        <a class="page-link" href="${nextUrl}" aria-label="Next">
-		          <span aria-hidden="true">&raquo;</span>
-		        </a>
-		            </li>
-		         </c:if>
-		      </ul>
-		   </nav>
-		</div> <!-- 페이징처리 div -->
-	</div>
+			<c:url var="pageUrl" value="/basicInfo/itemList">
+				<c:param name="searchType" value="${searchType}" />
+				<c:param name="keyword" value="${keyword}" />
+			</c:url>
+
+<!-- 			<nav aria-label="Page navigation" class="pagination-container"> -->
+<!-- 				<ul class="pagination justify-content-center"> -->
+				<nav aria-label="Page navigation" class="pagination-container">
+      <ul class="pagination justify-content-center">
+         <c:if test="${pageVO.prev}">
+            <li class="page-item">
+               <a class="page-link" href="/basicInfo/itemList?page=${pageVO.startPage - 1}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+               </a>
+            </li>
+         </c:if>
+         <c:forEach var="i" begin="${pageVO.startPage}" end="${pageVO.endPage}" step="1">
+            <li class="page-item ${pageVO.cri.page == i ? 'active' : ''}">
+               <a class="page-link" href="/basicInfo/itemList?page=${i}">${i}</a>
+            </li>
+         </c:forEach>
+         <c:if test="${pageVO.next && pageVO.endPage > 0}">
+            <li class="page-item">
+               <a class="page-link" href="/basicInfo/itemList?page=${pageVO.endPage + 1}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+               </a>
+            </li>
+         </c:if>
+      </ul>
+   </nav>
+			</div>
+<!-- 하단버튼 -->
+	<div class="flex justify-end items-center px-1 py-0 bg-white">
+		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" onclick="location.href='/basicInfo/itemAdd'">
+	        <span>등록</span>
+	        </button>
+	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteItemBtn">
+	        <span>삭제</span>
+	       	</button>
+	    </sec:authorize>
+    </div>
+</div>
 </div>
 
 
@@ -273,10 +241,10 @@
 					<table class="table table-hover" id="modal2-table">
 						<thead class="table-light">
 							<tr>
-								<th scope="col"></th>
-								<th scope="col"></th>
-								<th scope="col">거래처 코드</th>
-								<th scope="col">거래처 이름</th>
+								<th></th>
+								<th></th>
+								<th>거래처 코드</th>
+								<th>거래처 이름</th>
 							</tr>
 						</thead>
 						<tbody>

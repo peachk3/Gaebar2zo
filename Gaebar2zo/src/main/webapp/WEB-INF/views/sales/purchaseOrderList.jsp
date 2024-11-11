@@ -17,69 +17,55 @@
 <body class="bg-gray-100 font-sans">
 	<div class="container mx-auto px-4 py-8">
 		<div class="bg-white rounded-lg shadow-lg p-6">
-			<h1 class="text-2xl font-semibold text-gray-800 mb-6">발주 리스트</h1>
+			<h1 class="text-3xl font-semibold text-gray-800 mb-6">발주 관리</h1>
 			
-	<div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right : 10px; padding : 10px;">
-	<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-        <input type="button" class="btn btn-primary" value="등록" onclick="location.href='/sales/purchaseOrderAdd'">
-        <input type="button" id="deleteItemBtn" style="background-color:white; color:black;" name="deleteItemBtn" class="btn btn-primary" value="삭제">
-    </sec:authorize>
-    </div>
-    
    <div id="tableContainer" class="transition-all duration-300 ease-in-out">
-		<div class="overflow-x-hidden bg-white border 1px solid overflow-y-auto relative" style="height: 405px;">
-             <table class="table table-hover border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <div class="overflow-x-hidden bg-white border overflow-y-hidden relative" id="dynamicTable">
+             <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-hover relative">
         <thead>
-        <tr>
-            <th scope="col">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="selectAll" onclick="toggleCheckboxes(this)"> 
-                </div>
+        <tr class="text-center">
+            <th class="checkbox-column">
+                    <input class="form-check-input focus:outline-none focus:shadow-outline" type="checkbox" value="" id="selectAll" onclick="toggleCheckboxes(this)"> 
             </th>
-            <th scope="col">발주번호</th>
-            <th scope="col">거래처 명</th>
-            <th scope="col">발주일자</th>
-            <th scope="col">입고일자</th>
-            <th scope="col">납기일자</th>
-            <th scope="col">거래 금액</th>
-            <th scope="col">담당자 명</th>
-            <th scope="col">상태</th>
+            <th>발주번호</th>
+            <th>거래처 명</th>
+            <th>발주일자</th>
+            <th>입고일자</th>
+            <th>납기일자</th>
+            <th>거래 금액</th>
+            <th>담당자 명</th>
+            <th>상태</th>
         </tr>
         </thead>
-        <tbody>
+        
+		<c:set var="cellClass" value="clickable-cell text-gray-700 px-2 py-2 flex items-center" />
+        
+		<tbody class="bg-white divide-y divide-gray-200">
 	        <c:forEach var="po" items="${po}">
 	            <tr data-tran-num="${po.tran_num}">
-	                <td><div class="form-check">
-	                        <input class="form-check-input" type="checkbox" value="${po.tran_num}" id="${po.tran_num}"> 
-	                </div></td>
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${po.tran_num}</td>
+	                <td class="text-center">
+						<input class="form-check-input rowCheckbox focus:outline-none focus:shadow-outline" type="checkbox" value="${po.tran_num}" id="${po.tran_num}"> 
+	                </td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${po.tran_num}</span></td>
             <c:forEach var="cli" items="${po.clientList}">
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${cli.cli_name}</td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${cli.cli_name}</span></td>
 	        </c:forEach>
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${po.tran_date}</td>
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${po.rel_date}</td>
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${po.due_date}</td>
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${po.income}</td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${po.tran_date}</span></td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${po.rel_date}</span></td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${po.due_date}</span></td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${po.income}</span></td>
             <c:forEach var="user" items="${po.userList}">
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${user.user_per_name}</td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${user.user_per_name}</span></td>
 	        </c:forEach>
-	                <td class="clickable-cell" data-coreui-toggle="modal" data-coreui-target="#poInfoModal">${po.pro_status}</td>
+	                <td data-coreui-toggle="modal" data-coreui-target="#poInfoModal"><span class="${cellClass}">${po.pro_status}</span></td>
 	            </tr>
 	        </c:forEach>
         </tbody>
     </table>
 </div>
 </div>
-    <div class="container mt-3">
-    <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-        <button id="statusChangeBtn" class="btn btn-outline-info">상태 변경</button>
-        <div class="status-buttons mt-2">
-            <button class="btn btn-outline-info" id="preReceiveBtn">발주 예정</button>
-            <button class="btn btn-outline-info" id="completedReceiveBtn">발주 승인</button>
-        </div>
-        </sec:authorize>
-    </div>
     <!-- 페이징 처리 -->
+    <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
 	<nav aria-label="Page navigation" class="pagination-container">
 	   <ul class="pagination justify-content-center">
 	      <c:if test="${pageVO.prev}">
@@ -103,6 +89,26 @@
 	      </c:if>
 	   </ul>
 	</nav>
+</div>
+<!-- 하단 버튼 -->
+<div class="flex justify-between items-center px-1 py-0 bg-white">
+      <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+        <div class="flex gap-2">
+            <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-left" id="prePurchaseBtn">발주 예정</button>
+            <button type="button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-left" id="completedPurchaseBtn">발주 승인</button>
+        </div>
+       </sec:authorize>
+       <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+      	<div class="flex gap-2">
+           <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onclick="location.href='/sales/purchaseOrderAdd'">
+            <span>등록</span>
+           </button>
+           <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteItemBtn">
+            <span>삭제</span>
+           </button>
+       	</div>
+   </sec:authorize>
+    </div>
 </div>
 </div>
 
@@ -595,12 +601,8 @@
 	    	}
         });
 		
-	    $("#statusChangeBtn").click(function() {
-	        $(".status-buttons").toggle();
-	    });
-	
-	    $(".status-buttons .btn").click(function() {
-	        const pro_status = $(this).text().trim(); // "입고 예정" 혹은 "입고 완료" 버튼의 텍스트를 상태로 사용
+	    $("#prePurchaseBtn, #completedPurchaseBtn").click(function() {
+	        const pro_status = $(this).text().trim(); // "발주 예정" 혹은 "발주 승인" 버튼의 텍스트를 상태로 사용
 	
 	        const checkedCheckboxes = $('input[type="checkbox"].form-check-input:checked');
 	        const tran_nums = [];

@@ -10,11 +10,11 @@
 <body class="bg-gray-100 font-sans">
 		  <div class="container mx-auto px-4 py-8">
             <div class="bg-white rounded-lg shadow-lg p-6">
-            <h1 class="text-2xl font-semibold text-gray-800 mb-6">직원 리스트</h1>
+            <h1 class="text-3xl font-semibold text-gray-800 mb-6">사용자 관리</h1>
             
                     <form action="/system/employeeList" method="get" class="form-inline mt-3">
              		   <div class="flex flex-wrap -mx-3 mb-4 md:flex-nowrap">
-             		   <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+					        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <div class="input-group w-500">
                             <div class="input-group-prepend">
                                 <select class="form-select custom-select-radius custom-select-width" id="searchType" name="searchType">
@@ -30,61 +30,57 @@
                             <button class="btn btn-outline-secondary" type="submit">검색</button>
                             </div>
                             </div>
-							<div class="w-full md:w-1/2 px-3 flex justify-end items-center space-x-2">
-								<button class="btn btn-primary" type="button" onclick="showRegisterModal()">등록</button>
-
-								<button class="btn btn-primary" type="button" id="updateEmp">수정</button>
-								<button class="btn btn-primary" style="background-color:white; color:black;" type="button" id="deleteEmp">삭제</button>
-							</div>
                         </div>
                     </form>
                     
     <div id="tableContainer" class="transition-all duration-300 ease-in-out">
-	<div class="overflow-x-hidden bg-white border 1px solid overflow-y-auto relative" style="height: 405px;">
-	<table class="table table-hover border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <div class="overflow-x-hidden bg-white border overflow-y-hidden relative" id="dynamicTable">
+            	<table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-hover relative">
       <thead>
-      	<tr class="text-left">
-         <th scope="col"> 
-            <div class="form-check">
-           	   <input class="form-check-input" type="checkbox" value="" id="selectAll" onclick = "toggleCheckboxes(this)"> 
-            </div>
+      	<tr class="text-center">
+         <th class="checkbox-column"> 
+           	   <input class="form-check-input focus:outline-none focus:shadow-outline" type="checkbox" value="" id="selectAll" onclick = "toggleCheckboxes(this)"> 
          </th>
-	         <th scope="col">사용자ID</th>
-	         <th scope="col">사용자명</th>
-	         <th></th>
-	         <th scope="col">직책</th>
-	         <th scope="col">E-MAIL</th>
-	         <th scope="col">전화번호</th>
+
+	         <th>사용자ID</th>
+	         <th>사용자명</th>
+	         <th>비밀번호</th>
+	         <th>직책</th>
+	         <th>E-MAIL</th>
+	         <th>전화번호</th>
+
       	</tr>
       </thead>
-      <tbody>
+      
+			<c:set var="cellClass" value="clickable-cell text-gray-700 px-2 py-2 flex items-center" />
+
+		<tbody class="bg-white divide-y divide-gray-200">
 			<c:forEach var="emptbl" items="${employeeList }">
 				<tr>
-					<td>
-				  		<div class="form-check">
-                  			<input class="form-check-input itemCheckbox" type="checkbox"> 
-               			</div>
+					<td class="text-center">
+                  			<input class="form-check-input itemCheckbox focus:outline-none focus:shadow-outline" type="checkbox"> 
                		</td>
-               		<td>${emptbl.username }</td>
-               		<td>${emptbl.user_per_name}</td>
-               		<td></td>
-               		<td>${emptbl.user_pos}</td>
-               		<td>${emptbl.user_email  }</td>
-               		<td>${emptbl.user_phone }</td>
+
+               		<td><span class="${cellClass}">${emptbl.username }</span></td>
+               		<td><span class="${cellClass}">${emptbl.user_per_name}</span></td>
+               		<td><span class="${cellClass}">${emptbl.password }</span></td>
+               		<td><span class="${cellClass}">${emptbl.user_pos}</span></td>
+               		<td><span class="${cellClass}">${emptbl.user_email  }</span></td>
+               		<td><span class="${cellClass}">${emptbl.user_phone }</span></td>
+
                		<td></td>
 				</tr>	
 			</c:forEach>
-
 		</tbody>
-		
    </table>
     </div>
-</div>
+	</div>
 
-	   <c:url var="pageUrl" value="/system/employeeList">
-            <c:param name="searchType" value="${searchType}"/>
-            <c:param name="keyword" value="${keyword}"/>
-   	</c:url>
+	<div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+		<c:url var="pageUrl" value="/system/employeeList">
+			<c:param name="searchType" value="${searchType}"/>
+			<c:param name="keyword" value="${keyword}"/>
+		</c:url>
 	
 	 <nav aria-label="Page navigation" class="pagination-container">
             <ul class="pagination justify-content-center">
@@ -109,6 +105,21 @@
                 </c:if>
             </ul>
         </nav>
+        </div>
+    <!-- 하단버튼 -->
+	<div class="flex justify-end items-center px-1 py-0 bg-white">
+		<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" onclick="showRegisterModal()">
+	        <span>등록</span>
+	        </button>
+			<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" id="updateEmp">
+	        <span>수정</span>
+	        </button>
+	        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" id="deleteEmp">
+	        <span>삭제</span>
+	       	</button>
+	    </sec:authorize>
+    </div>
 	</div>
 </div>  
 
@@ -165,9 +176,15 @@
 							</select>
 							<div class="invalid-feedback" style="margin-left: 10px">직책을 선택해 주세요</div>
 						</div>
-						<div class="col-12 d-flex justify-content-end" style="margin-bottom: 10px;">
-							<button class="btn btn-primary" type="submit" id="submitBtn" name="submitBtn">저장</button>
-						</div>
+						<div class="flex justify-end items-center px-1 py-0 bg-white">
+						<button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2" 
+							id="submitBtn" name="submitBtn">
+				        	<span>저장</span>
+				        </button>
+				        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" data-coreui-dismiss="modal">
+				        	<span>닫기</span>
+				        </button>
+				        </div>
 					</form>
                 </div>
             </div>
@@ -219,6 +236,15 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="saveEditedEmp">저장</button>
                 </div>
+<!--                 <div class="flex justify-end items-center px-1 py-0 bg-white"> -->
+<!-- 					<button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center mr-2"  -->
+<!-- 						id="saveEditedEmp" name="submitBtn"> -->
+<!-- 			        	<span>저장</span> -->
+<!-- 			        </button> -->
+<!-- 			        <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" data-coreui-dismiss="modal"> -->
+<!-- 			        	<span>닫기</span> -->
+<!-- 			        </button> -->
+<!-- 		        </div> -->
             </div>
         </form>
     </div>
