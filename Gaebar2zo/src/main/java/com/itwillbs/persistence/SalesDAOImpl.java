@@ -168,6 +168,23 @@ public class SalesDAOImpl implements SalesDAO{
 		return tran_num;
 	}
 
+	@Override
+	public int getTotalShipmentCount() throws Exception {
+
+		logger.debug(" DAO : getTotalShipmentCount() 호출");
+
+		
+		return sqlSession.selectOne(NAMESPACE+"getTotalShipmentCount");
+	}
+
+	@Override
+	public List<TransactionVO> shipmentList(Criteria cri) throws Exception {
+		logger.debug(" DAO : shipmentList(Criteria cri) 호출");
+
+		
+		return sqlSession.selectList(NAMESPACE+"shipmentList",cri);
+	}
+
 
 
 

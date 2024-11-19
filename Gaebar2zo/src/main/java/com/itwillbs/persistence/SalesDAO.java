@@ -54,6 +54,12 @@ public interface SalesDAO {
 	// GetTranNum 추출
 	public String GetTranNum(TransactionVO tvo) throws Exception;
 
+	// 출하 리스트 총 개수
+	public int getTotalShipmentCount() throws Exception;
+
+	// 출하 리스트 
+	public List<TransactionVO> shipmentList(Criteria cri) throws Exception;
+
 
 
 

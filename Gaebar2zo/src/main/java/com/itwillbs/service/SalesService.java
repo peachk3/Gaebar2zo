@@ -40,6 +40,12 @@ public interface SalesService {
 	// 발주 정보 수정
 	public void PurchaseOrderUpdate(TransactionVO tvo) throws Exception;
 
+	// 출하 리스트 개수 세기
+	public int getTotalShipmentCount() throws Exception;
+
+	// 출하 리스트 
+	public List<TransactionVO> shipmentList(Criteria cri) throws Exception; 
+
 
 
 }

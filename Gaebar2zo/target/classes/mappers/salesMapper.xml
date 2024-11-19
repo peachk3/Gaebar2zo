@@ -216,7 +216,19 @@
 		]]>
 	</select>
 
+	
+	<!-- 출하 정보 출력 -->
+	<select id="shipmentList" resultMap="transMap">
+        select ship_num,tran_num,ship_wh_code,ship_due_date,comm,ship_id
+        from shipment
+		LIMIT #{pageStart}, #{pageSize}
+	</select>
 
+	<!-- 출하 리스트 총개수 세기 -->
+	<select id="getTotalShipmentCount" resultType="int">
+		select count(*) 
+      	from shipment
+	</select>
 
 
 

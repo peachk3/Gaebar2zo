@@ -192,8 +192,21 @@ public class SalesController {
 
 	// 출하 관리
 	@RequestMapping(value="/shipmentList",method=RequestMethod.GET)
-	public void shipmentList_GET() throws Exception{
+	public void shipmentList_GET(Criteria cri ,Model model) throws Exception{
 		logger.debug(" shipmentList_GET() 실행 ");
+		
+		// 하단 페이징처리 정보객체 생성
+	    PageVO pageVO = new PageVO();
+	    pageVO.setCri(cri);
+	    pageVO.setTotalCount(sService.getTotalShipmentCount());
+	    logger.debug(" cri " + pageVO.getCri());
+	    model.addAttribute("pageVO", pageVO);
+
+		List<TransactionVO> sl = sService.shipmentList(cri);
+		logger.debug("size : "+ sl.size());
+		logger.debug("sl : "+ sl);
+	    model.addAttribute("sl", sl);
+		
 
 	}
 

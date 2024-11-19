@@ -194,6 +194,26 @@ public class SalesServiceImpl implements SalesService{
 		return tran_num;
 	}
 
+	@Override
+	public int getTotalShipmentCount() throws Exception {
+		logger.debug("getTotalShipmentCount() 실행");
+
+		
+		
+		return sdao.getTotalShipmentCount();
+	}
+
+	@Override
+	public List<TransactionVO> shipmentList(Criteria cri) throws Exception {
+
+		
+		
+		return sdao.shipmentList(cri);
+	}
+	
+	
+	
+
 
 
 }
