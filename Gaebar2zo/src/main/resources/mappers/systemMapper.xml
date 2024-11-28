@@ -43,19 +43,23 @@
 				<choose>
 					<when test="searchType == 'code'"> AND username LIKE CONCAT('%', #{keyword}, '%')
 					</when>
-					<when test="searchType == 'name'"> AND user_per_name LIKE CONCAT('%', #{keyword},
-						'%') </when>
+					<when test="searchType == 'name'"> AND user_per_name LIKE CONCAT('%', #{keyword},'%') 
+					</when>
 					<when test="searchType == 'position'"> AND user_pos LIKE CONCAT('%', #{keyword}, '%')
 					</when>
 					<when test="searchType == 'email'"> AND user_email LIKE CONCAT('%', #{keyword}, '%')
 					</when>
 					<when test="searchType == 'phone'"> AND user_phone LIKE CONCAT('%', #{keyword}, '%')
 					</when>
-					<otherwise> AND (username LIKE CONCAT('%', #{keyword}, '%') OR
-						user_per_name LIKE CONCAT('%', #{keyword}, '%') OR user_pos LIKE
-						CONCAT('%', #{keyword}, '%') OR user_email LIKE CONCAT('%',
-						#{keyword}, '%')) OR user_phone LIKE CONCAT('%', #{keyword}, '%'))
-					</otherwise>
+					<otherwise>
+					 (
+				        username LIKE CONCAT('%', #{keyword}, '%') 
+				        OR user_per_name LIKE CONCAT('%', #{keyword}, '%') 
+				        OR user_pos LIKE CONCAT('%', #{keyword}, '%') 
+				        OR user_email LIKE CONCAT('%', #{keyword}, '%') 
+				        OR user_phone LIKE CONCAT('%', #{keyword}, '%')
+ 					 )
+ 					</otherwise>
 				</choose>
 			</if>
 		</where>
@@ -78,10 +82,13 @@
 					</when>
 					<when test="searchType == 'phone'"> AND user_phone LIKE CONCAT('%', #{keyword}, '%')
 					</when>
-					<otherwise> AND (username LIKE CONCAT('%', #{keyword}, '%') OR
-						user_per_name LIKE CONCAT('%', #{keyword}, '%') OR user_pos LIKE
-						CONCAT('%', #{keyword}, '%') OR user_email LIKE CONCAT('%',
-						#{keyword}, '%')) OR user_phone LIKE CONCAT('%', #{keyword}, '%'))
+					<otherwise> 
+					(
+					username LIKE CONCAT('%', #{keyword}, '%') 
+					OR user_per_name LIKE CONCAT('%', #{keyword}, '%') 
+					OR user_pos LIKE CONCAT('%', #{keyword}, '%') 
+					OR user_email LIKE CONCAT('%', #{keyword}, '%') 
+					OR user_phone LIKE CONCAT('%', #{keyword}, '%'))
 					</otherwise>
 				</choose>
 			</if>
