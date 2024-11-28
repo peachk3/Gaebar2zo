@@ -223,7 +223,8 @@ public class SystemController {
 		    
 		    logger.debug("controller => 사용자 업데이트 출력 성공: {}" + usersVo);
 		    
-		    return ResponseEntity.ok("Update successful");
+//		    return ResponseEntity.ok("success");
+		    return new ResponseEntity<>(HttpStatus.OK);
 		}
 	
 	//사용자 삭제

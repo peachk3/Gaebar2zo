@@ -132,22 +132,16 @@ $(document).ready(function() {
          contentType: 'application/json',
          data: JSON.stringify(data),
          beforeSend: function(xhr) {
-        	 if (header && token) {
-                 xhr.setRequestHeader(header, token);
-             }
+             xhr.setRequestHeader(header, token);  // CSRF 토큰 설정
          },
          success: function(response) {
-             console.log("서버 응답 메시지:", response);  // 서버 응답 확인
              Swal.fire('저장 완료', '사용자 정보가 저장되었습니다.', 'success').then(() => {
-                 $('#updateEmpModal').modal('hide');
-                 location.reload();
+                 location.reload();  // 페이지 새로고침
              });
          },
-         error: function(xhr, status, error) {
-             console.log("Error status:", xhr.status);
-             console.log("Error details:", error);
-             console.log("Server response:", xhr.responseText);
-             Swal.fire('Error', '저장 중 오류가 발생했습니다.', 'error');
+         error: function(error) {
+             console.log("AJAX Error:", error); // 오류 정보를 콘솔에 출력
+             Swal.fire('Error', '삭제 중 오류가 발생했습니다.', 'error');
          }
      });
  });

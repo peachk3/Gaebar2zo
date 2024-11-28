@@ -94,14 +94,15 @@ public class SystemDAOImpl implements SystemDAO{
 		    logger.info("dao -> 사용자 정보 업데이트 완료");
 
 		    // 권한 정보 업데이트
-		    AuthoritiesVO authVo = usersVo.getAuthList();
-		    if (authVo != null) {
-		        authVo.setUsername(usersVo.getUsername());  // authVo에 username 설정
-		        sqlSession.update(NAMESPACE + "updateEmpAuth", authVo);
-		        logger.info("dao -> 권한 정보 업데이트 완료");
-		    } else {
-		        logger.warn("권한 정보를 업데이트할 수 없습니다.");
-		    }
+//		    AuthoritiesVO authVo = usersVo.getAuthList();
+//		    if (authVo != null) {
+//		        authVo.setUsername(usersVo.getUsername());  // authVo에 username 설정
+//		        sqlSession.update(NAMESPACE + "updateEmpAuth", authVo);
+//		        
+//		        logger.info("dao -> 권한 정보 업데이트 완료");
+//		    } else {
+//		        logger.warn("권한 정보를 업데이트할 수 없습니다.");
+//		    }
 		}
 		    
 		    

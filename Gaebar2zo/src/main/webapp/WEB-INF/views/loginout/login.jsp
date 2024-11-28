@@ -130,7 +130,7 @@
 	<script src="/resources/js/login.js"></script>
 </body>
 
-<script type="text/javascript">
+<script>
 $(document).ready(function() {
     // 로그인 버튼 활성화/비활성화
     function toggleSubmitButton() {
@@ -192,7 +192,7 @@ $(document).ready(function() {
                     icon: 'success',
                     confirmButtonText: '확인'
                 }).then(() => {
-                    window.location.href = 'system/loginout/main'; // 로그인 후 이동할 페이지로 변경
+                    window.location.href = '/loginout/main'; // 로그인 후 이동할 페이지로 변경
                 });
             },
             error: function(xhr, status, error) {
